@@ -70,6 +70,7 @@ private:
     void updateUserNames();
     void updateTopicLabel();
     static QString roleIcon(GroupRole role);
+    bool canSetTopic() const;
 
 private:
     Core& core;

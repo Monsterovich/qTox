@@ -433,7 +433,7 @@ void GroupForm::onTopicContextMenuRequested(const QPoint& localPos)
     auto* copyIdAction = contextMenu->addAction(tr("Copy group ID"));
     const GroupRole selfRole = group->getPeerRole(core.getSelfPublicKey());
     QAction* setTopicAction = nullptr;
-    if (selfRole == GroupRole::Founder || selfRole == GroupRole::Moderator) {
+    if (canSetTopic()) {
         setTopicAction = contextMenu->addAction(tr("Set topic..."));
     }
 
@@ -547,8 +547,7 @@ void GroupForm::setPeerLimit()
 
 void GroupForm::editTopic()
 {
-    const GroupRole selfRole = group->getPeerRole(core.getSelfPublicKey());
-    if (selfRole != GroupRole::Founder && selfRole != GroupRole::Moderator) {
+    if (!canSetTopic()) {
         return;
     }
 
@@ -558,4 +557,18 @@ void GroupForm::editTopic()
     if (ok) {
         core.changeGroupTopic(group->getId(), topic);
     }
+}
+
+bool GroupForm::canSetTopic() const
+{
+    const GroupRole selfRole = group->getPeerRole(core.getSelfPublicKey());
+    if (selfRole == GroupRole::Observer) {
+        return false;
+    }
+
+    if (group->getTopicLock() == GroupTopicLock::Disabled) {
+        return true;
+    }
+
+    return selfRole == GroupRole::Founder || selfRole == GroupRole::Moderator;
 }
