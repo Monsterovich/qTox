@@ -240,7 +240,8 @@ void ChatManager::onFriendAdded(uint32_t friendId, const ToxPk& friendPk)
 
     Friend* newFriend = friendList.addFriend(friendId, friendPk, settings);
     auto chatroom =
-        std::make_shared<FriendChatroom>(newFriend, dialogsManager, *core, settings, conferenceList);
+        std::make_shared<FriendChatroom>(newFriend, dialogsManager, *core, settings, conferenceList,
+                                         groupList);
     auto friendMessageDispatcher =
         std::make_shared<FriendMessageDispatcher>(*newFriend,
                                                   MessageProcessor(*sharedMessageProcessorParams),

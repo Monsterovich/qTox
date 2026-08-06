@@ -1180,6 +1180,19 @@ so you can save the file on Windows.</source>
         <translation>Пригласить в конференцию &apos;%1&apos;</translation>
     </message>
     <message>
+        <source>Invite to group</source>
+        <comment>Menu to invite a friend to a group</comment>
+        <translation>Пригласить в группу</translation>
+    </message>
+    <message>
+        <source>Invite to group &apos;%1&apos;</source>
+        <translation>Пригласить в группу &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <source>To new group</source>
+        <translation>В новую группу</translation>
+    </message>
+    <message>
         <source>Move to circle...</source>
         <comment>Menu to move a friend into a different circle</comment>
         <translation>Переместить в круг...</translation>
