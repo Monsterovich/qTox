@@ -347,7 +347,11 @@ bool Group::kickPeer(const ToxPk& pk)
 {
     for (auto it = peerIdToPk.cbegin(); it != peerIdToPk.cend(); ++it) {
         if (it.value() == pk) {
-            return groupQuery.kickGroupPeer(toxGroupNum, it.key());
+            if (groupQuery.kickGroupPeer(toxGroupNum, it.key())) {
+                onPeerExit(it.key());
+                return true;
+            }
+            return false;
         }
     }
     qWarning() << "kickPeer: unknown peer" << pk.toString();
