@@ -1574,6 +1574,7 @@ bool Core::setGroupPassword(int groupNumber, const QByteArray& password)
         return false;
     }
 
+    emit groupPasswordChanged(groupNumber, !password.isEmpty());
     return true;
 }
 
@@ -1589,6 +1590,7 @@ bool Core::setGroupPeerLimit(int groupNumber, uint16_t peerLimit)
         return false;
     }
 
+    emit groupPeerLimitChanged(groupNumber, peerLimit);
     return true;
 }
 
@@ -1605,6 +1607,7 @@ bool Core::setGroupTopicLock(int groupNumber, GroupTopicLock topicLock)
         return false;
     }
 
+    emit groupTopicLockChanged(groupNumber, topicLock);
     return true;
 }
 
@@ -1621,6 +1624,7 @@ bool Core::setGroupVoiceState(int groupNumber, GroupVoiceState voiceState)
         return false;
     }
 
+    emit groupVoiceStateChanged(groupNumber, voiceState);
     return true;
 }
 
@@ -1637,6 +1641,7 @@ bool Core::setGroupPrivacyState(int groupNumber, GroupPrivacyState privacyState)
         return false;
     }
 
+    emit groupPrivacyStateChanged(groupNumber, privacyState);
     return true;
 }
 
