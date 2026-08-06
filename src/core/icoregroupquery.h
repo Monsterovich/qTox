@@ -63,4 +63,9 @@ public:
     virtual bool setGroupTopicLock(int groupNumber, GroupTopicLock topicLock) = 0;
     virtual bool setGroupVoiceState(int groupNumber, GroupVoiceState voiceState) = 0;
     virtual bool setGroupPrivacyState(int groupNumber, GroupPrivacyState privacyState) = 0;
+    virtual bool getGroupHasPassword(int groupNumber) const = 0;
+    virtual uint16_t getGroupPeerLimit(int groupNumber) const = 0;
+    virtual GroupTopicLock getGroupTopicLock(int groupNumber) const = 0;
+    virtual GroupVoiceState getGroupVoiceState(int groupNumber) const = 0;
+    virtual GroupPrivacyState getGroupPrivacyState(int groupNumber) const = 0;
 };

@@ -633,6 +633,12 @@ Group* ChatManager::createGroup(uint32_t groupNumber, const GroupId& groupId, co
                                          core->getUsername(), friendList);
     assert(newGroup);
 
+    newGroup->setPasswordSet(core->getGroupHasPassword(groupNumber));
+    newGroup->setPeerLimit(core->getGroupPeerLimit(groupNumber));
+    newGroup->setTopicLock(core->getGroupTopicLock(groupNumber));
+    newGroup->setVoiceState(core->getGroupVoiceState(groupNumber));
+    newGroup->setPrivacyState(core->getGroupPrivacyState(groupNumber));
+
     auto chatroom = std::make_shared<GroupRoom>(newGroup, dialogsManager, *core, friendList);
     auto messageDispatcher =
         std::make_shared<GroupMessageDispatcher>(*newGroup,

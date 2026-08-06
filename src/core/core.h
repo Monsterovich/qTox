@@ -134,6 +134,11 @@ public slots:
     bool setGroupTopicLock(int groupNumber, GroupTopicLock topicLock) override;
     bool setGroupVoiceState(int groupNumber, GroupVoiceState voiceState) override;
     bool setGroupPrivacyState(int groupNumber, GroupPrivacyState privacyState) override;
+    bool getGroupHasPassword(int groupNumber) const override;
+    uint16_t getGroupPeerLimit(int groupNumber) const override;
+    GroupTopicLock getGroupTopicLock(int groupNumber) const override;
+    GroupVoiceState getGroupVoiceState(int groupNumber) const override;
+    GroupPrivacyState getGroupPrivacyState(int groupNumber) const override;
 
     void removeFriend(uint32_t friendId);
     void removeConference(int conferenceId);

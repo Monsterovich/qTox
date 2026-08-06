@@ -1620,6 +1620,71 @@ bool Core::setGroupPrivacyState(int groupNumber, GroupPrivacyState privacyState)
     return true;
 }
 
+bool Core::getGroupHasPassword(int groupNumber) const
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_State_Query error;
+    const size_t passwordSize = tox_group_get_password_size(tox.get(), groupNumber, &error);
+    if (PARSE_ERR(error)) {
+        return passwordSize != 0;
+    }
+
+    return false;
+}
+
+uint16_t Core::getGroupPeerLimit(int groupNumber) const
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_State_Query error;
+    const uint16_t peerLimit = tox_group_get_peer_limit(tox.get(), groupNumber, &error);
+    if (PARSE_ERR(error)) {
+        return peerLimit;
+    }
+
+    return 0;
+}
+
+GroupTopicLock Core::getGroupTopicLock(int groupNumber) const
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_State_Query error;
+    const auto topicLock = tox_group_get_topic_lock(tox.get(), groupNumber, &error);
+    if (PARSE_ERR(error)) {
+        return static_cast<GroupTopicLock>(topicLock);
+    }
+
+    return GroupTopicLock::Unknown;
+}
+
+GroupVoiceState Core::getGroupVoiceState(int groupNumber) const
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_State_Query error;
+    const auto voiceState = tox_group_get_voice_state(tox.get(), groupNumber, &error);
+    if (PARSE_ERR(error)) {
+        return static_cast<GroupVoiceState>(voiceState);
+    }
+
+    return GroupVoiceState::Unknown;
+}
+
+GroupPrivacyState Core::getGroupPrivacyState(int groupNumber) const
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_State_Query error;
+    const auto privacyState = tox_group_get_privacy_state(tox.get(), groupNumber, &error);
+    if (PARSE_ERR(error)) {
+        return static_cast<GroupPrivacyState>(privacyState);
+    }
+
+    return GroupPrivacyState::Unknown;
+}
+
 /**
  * @brief Get the name of a group
  */
