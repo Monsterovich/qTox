@@ -414,6 +414,8 @@ void ChatManager::onGroupJoined(uint32_t groupNumber, const GroupId& groupId)
             groupName = settings.getGroupName(groupId.toString());
         }
         g = createGroup(groupNumber, groupId, groupName);
+    } else {
+        updateGroupNumber(g, groupNumber);
     }
     if (g != nullptr) {
         addSelfToGroup(g);
@@ -477,6 +479,7 @@ void ChatManager::onGroupSelfJoined(uint32_t groupNumber)
         }
     }
     if (g != nullptr) {
+        updateGroupNumber(g, groupNumber);
         addSelfToGroup(g);
         const QString groupName = core->getGroupTitle(groupNumber);
         if (!groupName.isEmpty()) {
@@ -494,6 +497,14 @@ void ChatManager::addSelfToGroup(Group* g)
         return;
     }
     g->onPeerJoin(selfPeerId);
+}
+
+void ChatManager::updateGroupNumber(Group* g, uint32_t groupNumber)
+{
+    if (g->getId() != groupNumber) {
+        groupList.setToxGroupNum(g->getId(), groupNumber, g->getPersistentId());
+        g->setToxGroupNumber(groupNumber);
+    }
 }
 
 void ChatManager::onGroupSelfDisconnected(uint32_t groupNumber)

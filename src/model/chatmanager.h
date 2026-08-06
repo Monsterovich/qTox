@@ -121,6 +121,7 @@ private:
     Conference* createConference(uint32_t conferenceNum, const ConferenceId& conferenceId);
     Group* createGroup(uint32_t groupNumber, const GroupId& groupId, const QString& groupName);
     void addSelfToGroup(Group* g);
+    void updateGroupNumber(Group* g, uint32_t groupNumber);
 
     Profile& profile;
     Core* core = nullptr;

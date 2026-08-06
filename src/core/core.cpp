@@ -22,6 +22,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QRegularExpression>
+#include <QSet>
 #include <QString>
 #include <QStringBuilder>
 #include <QTimer>
@@ -1220,6 +1221,25 @@ void Core::loadGroups()
 {
     const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
 
+    const uint32_t groupCount = tox_group_get_group_list_size(tox.get());
+    QVector<uint32_t> numbers(groupCount);
+    tox_group_get_group_list(tox.get(), numbers.data());
+
+    QSet<GroupId> alreadyLoaded;
+    for (const uint32_t groupNumber : numbers) {
+        const GroupId groupId = getGroupPersistentId(groupNumber);
+        if (groupId.isEmpty()) {
+            continue;
+        }
+        alreadyLoaded.insert(groupId);
+        if (groupIdToNumber.contains(groupId)) {
+            continue;
+        }
+        numberToGroupId[groupNumber] = groupId;
+        groupIdToNumber[groupId] = groupNumber;
+        emit groupJoined(groupNumber, groupId);
+    }
+
     const QStringList saved = settings.getSavedGroups();
     for (const QString& groupIdHex : saved) {
         if (groupIdHex.isEmpty()) {
@@ -1231,7 +1251,7 @@ void Core::loadGroups()
             continue;
         }
         const GroupId groupId(rawId);
-        if (groupIdToNumber.contains(groupId)) {
+        if (groupIdToNumber.contains(groupId) || alreadyLoaded.contains(groupId)) {
             continue;
         }
 
@@ -1794,7 +1814,7 @@ void Core::groupInviteFriend(uint32_t friendId, int groupNumber)
     const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
 
     Tox_Err_Group_Invite_Friend error;
-    tox_group_invite_friend(tox.get(), friendId, groupNumber, &error);
+    tox_group_invite_friend(tox.get(), groupNumber, friendId, &error);
     if (!PARSE_ERR(error)) {
         qWarning() << "Failed to invite friend" << friendId << "to group" << groupNumber;
     }

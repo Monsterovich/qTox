@@ -39,6 +39,14 @@ const GroupId& GroupList::id2Key(uint32_t groupNum)
     return id2key[groupNum];
 }
 
+void GroupList::setToxGroupNum(uint32_t oldGroupNum, uint32_t newGroupNum, const GroupId& groupId)
+{
+    if (oldGroupNum != newGroupNum) {
+        id2key.remove(oldGroupNum);
+        id2key[newGroupNum] = groupId;
+    }
+}
+
 void GroupList::removeGroup(const GroupId& groupId, bool /*fake*/)
 {
     auto g_it = groupList.find(groupId);

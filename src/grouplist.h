@@ -22,6 +22,7 @@ public:
                     const QString& groupName, const QString& selfName, FriendList& friendList);
     Group* findGroup(const GroupId& groupId);
     const GroupId& id2Key(uint32_t groupNum);
+    void setToxGroupNum(uint32_t oldGroupNum, uint32_t newGroupNum, const GroupId& groupId);
     void removeGroup(const GroupId& groupId, bool fake = false);
     QList<Group*> getAllGroups();
     void clear();

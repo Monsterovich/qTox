@@ -28,6 +28,7 @@ public:
           ICoreGroupQuery& groupQuery_, ICoreIdHandler& idHandler_, FriendList& friendList);
     uint32_t getId() const override;
     const GroupId& getPersistentId() const override;
+    void setToxGroupNumber(uint32_t groupNumber);
     int getPeersCount() const;
     const QMap<ToxPk, QString>& getPeerList() const;
     bool peerHasNickname(ToxPk pk);

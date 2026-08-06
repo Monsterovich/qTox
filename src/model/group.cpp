@@ -68,6 +68,11 @@ uint32_t Group::getId() const
     return toxGroupNum;
 }
 
+void Group::setToxGroupNumber(uint32_t groupNumber)
+{
+    toxGroupNum = groupNumber;
+}
+
 const GroupId& Group::getPersistentId() const
 {
     return groupId;
