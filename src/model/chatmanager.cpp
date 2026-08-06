@@ -481,6 +481,7 @@ void ChatManager::onGroupSelfJoined(uint32_t groupNumber)
     if (g != nullptr) {
         updateGroupNumber(g, groupNumber);
         addSelfToGroup(g);
+        g->updatePeerRoles();
         const QString groupName = core->getGroupTitle(groupNumber);
         if (!groupName.isEmpty()) {
             g->updateName(groupName);
