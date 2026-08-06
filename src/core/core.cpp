@@ -36,6 +36,10 @@
 
 const QString Core::TOX_EXT = ".tox";
 
+// how often to force a group reconnect (workaround for toxcore not restoring
+// group connections/roles after a restart)
+static constexpr int GROUP_RECONNECT_INTERVAL_MS = 10000;
+
 #define ASSERT_CORE_THREAD assert(QThread::currentThread() == coreThread.get())
 
 namespace {
@@ -580,6 +584,8 @@ void Core::onGroupPeerJoin(Tox* tox, uint32_t groupNumber, uint32_t peerId, void
     std::ignore = tox;
     auto* const core = static_cast<Core*>(vCore);
     qWarning("Group %u peer %u joined", groupNumber, peerId);
+    ++core->groupPeerCounts[groupNumber];
+    core->stopGroupReconnectTimer(groupNumber);
     emit core->groupPeerJoined(groupNumber, peerId);
 }
 
@@ -594,6 +600,15 @@ void Core::onGroupPeerExit(Tox* tox, uint32_t groupNumber, uint32_t peerId, Tox_
     std::ignore = partMessageLength;
     auto* const core = static_cast<Core*>(vCore);
     qWarning("Group %u peer %u left, exit type %d", groupNumber, peerId, static_cast<int>(exitType));
+    auto it = core->groupPeerCounts.find(groupNumber);
+    if (it != core->groupPeerCounts.end() && it.value() > 0) {
+        if (it.value() == 1) {
+            core->startGroupReconnectTimer(groupNumber);
+            core->groupPeerCounts.erase(it);
+        } else {
+            --it.value();
+        }
+    }
     emit core->groupPeerExited(groupNumber, peerId);
 }
 
@@ -616,6 +631,7 @@ void Core::onGroupSelfJoin(Tox* tox, uint32_t groupNumber, void* vCore)
     if (!groupId.isEmpty()) {
         core->numberToGroupId[groupNumber] = groupId;
         core->groupIdToNumber[groupId] = groupNumber;
+        core->startGroupReconnectTimer(groupNumber);
     }
     emit core->groupSelfJoined(groupNumber);
 }
@@ -638,6 +654,8 @@ void Core::onGroupJoinFail(Tox* tox, uint32_t groupNumber, Tox_Group_Join_Fail f
     std::ignore = failType;
     auto* const core = static_cast<Core*>(vCore);
     qWarning() << "Group join failed for group" << groupNumber;
+    core->stopGroupReconnectTimer(groupNumber);
+    core->groupPeerCounts.remove(groupNumber);
     emit core->groupJoinFailed(groupNumber);
 }
 
@@ -1237,6 +1255,7 @@ void Core::loadGroups()
         }
         numberToGroupId[groupNumber] = groupId;
         groupIdToNumber[groupId] = groupNumber;
+        startGroupReconnectTimer(groupNumber);
         emit groupJoined(groupNumber, groupId);
     }
 
@@ -1267,6 +1286,7 @@ void Core::loadGroups()
 
         numberToGroupId[groupNumber] = groupId;
         groupIdToNumber[groupId] = groupNumber;
+        startGroupReconnectTimer(groupNumber);
         emit groupJoined(groupNumber, groupId);
     }
 }
@@ -1843,6 +1863,7 @@ int Core::createGroup(const QString& groupName)
     const GroupId groupId = getGroupPersistentId(groupNumber);
     numberToGroupId[groupNumber] = groupId;
     groupIdToNumber[groupId] = groupNumber;
+    startGroupReconnectTimer(groupNumber);
 
     emit saveRequest();
     emit emptyGroupCreated(groupNumber, groupId, groupName);
@@ -1878,6 +1899,7 @@ uint32_t Core::joinGroup(const GroupInvite& inviteInfo)
     const GroupId groupId = getGroupPersistentId(groupNumber);
     numberToGroupId[groupNumber] = groupId;
     groupIdToNumber[groupId] = groupNumber;
+    startGroupReconnectTimer(groupNumber);
 
     emit saveRequest();
     emit groupJoined(groupNumber, groupId);
@@ -1914,6 +1936,7 @@ int Core::joinGroup(const GroupId& groupId)
 
     numberToGroupId[groupNumber] = groupId;
     groupIdToNumber[groupId] = groupNumber;
+    startGroupReconnectTimer(groupNumber);
 
     emit saveRequest();
     emit groupJoined(groupNumber, groupId);
@@ -1933,6 +1956,8 @@ void Core::quitGroup(int groupNumber)
             numberToGroupId.erase(groupIdIt);
             groupIdToNumber.remove(groupId);
         }
+        stopGroupReconnectTimer(groupNumber);
+        groupPeerCounts.remove(groupNumber);
         emit saveRequest();
         emit groupSelfDisconnected(groupNumber);
     }
@@ -1941,6 +1966,12 @@ void Core::quitGroup(int groupNumber)
 void Core::leaveAllGroups()
 {
     const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    for (auto it = groupReconnectTimers.cbegin(); it != groupReconnectTimers.cend(); ++it) {
+        it.value()->deleteLater();
+    }
+    groupReconnectTimers.clear();
+    groupPeerCounts.clear();
 
     if (numberToGroupId.isEmpty()) {
         return;
@@ -1959,6 +1990,60 @@ void Core::leaveAllGroups()
     // Let toxcore send out the leave packets before the Tox instance is torn down.
     for (int i = 0; i < 10; ++i) {
         tox_iterate(tox.get(), this);
+    }
+}
+
+bool Core::reconnectGroup(uint32_t groupNumber)
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_Reconnect error;
+    const bool success = tox_group_reconnect(tox.get(), groupNumber, &error);
+    if (!success) {
+        qWarning() << "Failed to reconnect group" << groupNumber << ":"
+                   << tox_err_group_reconnect_to_string(error);
+    }
+    return success;
+}
+
+void Core::retryGroupReconnect(uint32_t groupNumber)
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    if (!numberToGroupId.contains(groupNumber)) {
+        stopGroupReconnectTimer(groupNumber);
+        return;
+    }
+
+    // group has other members, toxcore keeps it connected on its own
+    if (groupPeerCounts.value(groupNumber, 0) > 0) {
+        stopGroupReconnectTimer(groupNumber);
+        return;
+    }
+
+    reconnectGroup(groupNumber);
+}
+
+void Core::startGroupReconnectTimer(uint32_t groupNumber)
+{
+    if (groupReconnectTimers.contains(groupNumber)) {
+        return;
+    }
+
+    auto* timer = new QTimer(this);
+    timer->setInterval(GROUP_RECONNECT_INTERVAL_MS);
+    connect(timer, &QTimer::timeout, this,
+            [this, groupNumber] { retryGroupReconnect(groupNumber); });
+    groupReconnectTimers[groupNumber] = timer;
+    QMetaObject::invokeMethod(this, [timer] { timer->start(); }, Qt::QueuedConnection);
+}
+
+void Core::stopGroupReconnectTimer(uint32_t groupNumber)
+{
+    auto it = groupReconnectTimers.find(groupNumber);
+    if (it != groupReconnectTimers.end()) {
+        it.value()->deleteLater();
+        groupReconnectTimers.erase(it);
     }
 }
 

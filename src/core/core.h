@@ -21,6 +21,7 @@
 
 #include "src/model/status.h"
 
+#include <QHash>
 #include <QMutex>
 #include <QObject>
 #include <QThread>
@@ -96,6 +97,7 @@ public:
     bool setGroupPeerRole(int groupNumber, int peerId, GroupRole role) override;
     bool kickGroupPeer(int groupNumber, int peerId) override;
     GroupId getGroupPersistentId(uint32_t groupNumber) const;
+    bool reconnectGroup(uint32_t groupNumber);
 
     bool isFriendOnline(uint32_t friendId) const;
     bool hasFriendWithPublicKey(const ToxPk& publicKey) const;
@@ -315,6 +317,10 @@ private:
 
     void checkLastOnline(uint32_t friendId);
 
+    void startGroupReconnectTimer(uint32_t groupNumber);
+    void stopGroupReconnectTimer(uint32_t groupNumber);
+    void retryGroupReconnect(uint32_t groupNumber);
+
     QString getFriendRequestErrorMessage(const ToxId& friendId, const QString& message) const;
     static void registerCallbacks(Tox* tox);
 
@@ -356,4 +362,7 @@ private:
 
     QHash<uint32_t, GroupId> numberToGroupId;
     QHash<GroupId, uint32_t> groupIdToNumber;
+    QHash<uint32_t, QTimer*> groupReconnectTimers;
+    // number of group members other than ourselves
+    QHash<uint32_t, uint32_t> groupPeerCounts;
 };
