@@ -27,6 +27,7 @@
 #include <QMimeData>
 #include <QPushButton>
 #include <QRegularExpression>
+#include <QTextDocument>
 
 namespace {
 const auto LABEL_PEER_TYPE_OUR = QVariant(QStringLiteral("our"));
@@ -366,6 +367,12 @@ void GroupForm::onLabelContextMenuRequested(const QPoint& localPos)
     if (menuTitle.endsWith(QLatin1String(", "))) {
         menuTitle.chop(2);
     }
+
+    // remove HTML tags from the title, if any, so that it's displayed correctly in the menu
+    QTextDocument doc;
+    doc.setHtml(menuTitle);
+    menuTitle = doc.toPlainText();
+
     QAction* menuTitleAction = contextMenu->addAction(menuTitle);
     menuTitleAction->setEnabled(false); // make sure the title is not clickable
     contextMenu->addSeparator();
