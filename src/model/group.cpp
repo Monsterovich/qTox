@@ -14,11 +14,6 @@
 #include <cassert>
 #include <utility>
 
-namespace {
-const int MAX_GROUP_NAME_LENGTH = 48;
-const int MAX_GROUP_TOPIC_LENGTH = 512;
-} // namespace
-
 Group::Group(int groupId_, const GroupId persistentGroupId, QString name, QString selfName_,
              ICoreGroupQuery& groupQuery_, ICoreIdHandler& idHandler_, FriendList& friendList_)
     : groupQuery(groupQuery_)
@@ -35,7 +30,7 @@ Group::Group(int groupId_, const GroupId persistentGroupId, QString name, QStrin
 
 void Group::setName(const QString& newTitle)
 {
-    const QString shortTitle = newTitle.left(MAX_GROUP_NAME_LENGTH);
+    const QString shortTitle = newTitle.left(TOX_GROUP_MAX_GROUP_NAME_LENGTH);
     if (!shortTitle.isEmpty() && groupName != shortTitle) {
         groupName = shortTitle;
         emit displayedNameChanged(groupName);
@@ -45,7 +40,7 @@ void Group::setName(const QString& newTitle)
 
 void Group::updateName(const QString& newTitle)
 {
-    const QString shortTitle = newTitle.left(MAX_GROUP_NAME_LENGTH);
+    const QString shortTitle = newTitle.left(TOX_GROUP_MAX_GROUP_NAME_LENGTH);
     if (!shortTitle.isEmpty() && groupName != shortTitle) {
         groupName = shortTitle;
         emit displayedNameChanged(groupName);
@@ -140,7 +135,7 @@ QString Group::getSelfName() const
 
 void Group::setTopic(const QString& author, const QString& newTopic)
 {
-    const QString shortTopic = newTopic.left(MAX_GROUP_TOPIC_LENGTH);
+    const QString shortTopic = newTopic.left(TOX_GROUP_MAX_TOPIC_LENGTH);
     if (topic != shortTopic) {
         topic = shortTopic;
         emit topicChanged(author, topic);
