@@ -25,7 +25,7 @@ public:
 
     ToxPk getSelfPublicKey() const override
     {
-        static uint8_t id[ToxPk::size] = {0};
+        static uint8_t id[TOX_PUBLIC_KEY_SIZE] = {0};
         return ToxPk(id);
     }
 

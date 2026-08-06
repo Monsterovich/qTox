@@ -8,6 +8,7 @@
 
 #include "conference.h"
 #include "friend.h"
+#include "group.h"
 #include "notificationdata.h"
 
 #include "src/persistence/inotificationsettings.h"
@@ -36,9 +37,12 @@ public:
     NotificationData incomingCallNotification(const Friend* f);
     NotificationData conferenceMessageNotification(const Conference* c, const ToxPk& sender,
                                                    const QString& message);
+    NotificationData groupMessageNotification(const Group* g, const ToxPk& sender,
+                                              const QString& message);
     NotificationData fileTransferNotification(const Friend* f, const QString& filename,
                                               size_t fileSize);
     NotificationData conferenceInvitationNotification(const Friend* from);
+    NotificationData groupInvitationNotification(const Friend* from);
     NotificationData friendRequestNotification(const ToxPk& sender, const QString& message);
 
 public slots:

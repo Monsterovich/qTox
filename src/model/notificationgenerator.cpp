@@ -97,6 +97,25 @@ NotificationData NotificationGenerator::conferenceMessageNotification(const Conf
     return ret;
 }
 
+NotificationData NotificationGenerator::groupMessageNotification(const Group* g,
+                                                                 const ToxPk& sender,
+                                                                 const QString& message)
+{
+    NotificationData ret;
+    ret.category = "transfer";
+
+    if (notificationSettings.getNotifyHide()) {
+        ret.title = tr("New group message");
+        return ret;
+    }
+
+    ret.title = g->getName();
+    ret.message = message;
+    ret.pixmap = getSenderAvatar(profile, sender);
+
+    return ret;
+}
+
 NotificationData NotificationGenerator::fileTransferNotification(const Friend* f,
                                                                  const QString& filename,
                                                                  size_t fileSize)
@@ -130,6 +149,23 @@ NotificationData NotificationGenerator::conferenceInvitationNotification(const F
     }
 
     ret.title = tr("%1 invites you to join a conference.").arg(from->getDisplayedName());
+    ret.message = "";
+    ret.pixmap = getSenderAvatar(profile, from->getPublicKey());
+
+    return ret;
+}
+
+NotificationData NotificationGenerator::groupInvitationNotification(const Friend* from)
+{
+    NotificationData ret;
+    ret.category = "im";
+
+    if (notificationSettings.getNotifyHide()) {
+        ret.title = tr("Group invite received");
+        return ret;
+    }
+
+    ret.title = tr("%1 invites you to join a group.").arg(from->getDisplayedName());
     ret.message = "";
     ret.pixmap = getSenderAvatar(profile, from->getPublicKey());
 
