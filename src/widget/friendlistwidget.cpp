@@ -428,9 +428,9 @@ void FriendListWidget::removeCircleWidget(CircleWidget* widget)
 }
 
 void FriendListWidget::searchChatRooms(const QString& searchString, bool hideOnline,
-                                       bool hideOffline, bool hideConferences)
+                                       bool hideOffline, bool hideConferences, bool hideGroups)
 {
-    manager->setFilter(searchString, hideOnline, hideOffline, hideConferences);
+    manager->setFilter(searchString, hideOnline, hideOffline, hideConferences, hideGroups);
 }
 
 void FriendListWidget::renameConferenceWidget(ConferenceWidget* conferenceWidget, const QString& newName)

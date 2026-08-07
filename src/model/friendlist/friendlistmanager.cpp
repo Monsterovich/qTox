@@ -76,16 +76,18 @@ void FriendListManager::resetParents()
 }
 
 void FriendListManager::setFilter(const QString& searchString, bool hideOnline, bool hideOffline,
-                                  bool hideConferences)
+                                  bool hideConferences, bool hideGroups)
 {
     if (filterParams.searchString == searchString && filterParams.hideOnline == hideOnline
-        && filterParams.hideOffline == hideOffline && filterParams.hideConferences == hideConferences) {
+        && filterParams.hideOffline == hideOffline && filterParams.hideConferences == hideConferences
+        && filterParams.hideGroups == hideGroups) {
         return;
     }
     filterParams.searchString = searchString;
     filterParams.hideOnline = hideOnline;
     filterParams.hideOffline = hideOffline;
     filterParams.hideConferences = hideConferences;
+    filterParams.hideGroups = hideGroups;
 
     setSortRequired();
 }
@@ -112,7 +114,11 @@ void FriendListManager::applyFilter()
             itemTmp->setWidgetVisible(false);
         }
 
-        if (filterParams.hideConferences && (itemTmp->isConference() || itemTmp->isGroup())) {
+        if (filterParams.hideConferences && itemTmp->isConference()) {
+            itemTmp->setWidgetVisible(false);
+        }
+
+        if (filterParams.hideGroups && itemTmp->isGroup()) {
             itemTmp->setWidgetVisible(false);
         }
     }

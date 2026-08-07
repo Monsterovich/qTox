@@ -3302,6 +3302,10 @@ number here may cause the scroll bar to disappear.</source>
         <translation>Конференции</translation>
     </message>
     <message>
+        <source>Groups</source>
+        <translation>Группы</translation>
+    </message>
+    <message>
         <source>Search Contacts</source>
         <translation>Поиск контактов</translation>
     </message>

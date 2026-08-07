@@ -122,7 +122,8 @@ private:
         Online,
         Offline,
         Friends,
-        Conferences
+        Conferences,
+        Groups
     };
 
 public:
@@ -295,6 +296,7 @@ private:
     void changeDisplayMode();
     void updateFilterText();
     FilterCriteria getFilterCriteria() const;
+    static bool filterConferences(FilterCriteria index);
     static bool filterGroups(FilterCriteria index);
     static bool filterOnline(FilterCriteria index);
     static bool filterOffline(FilterCriteria index);
@@ -324,6 +326,7 @@ private:
     QAction* filterOnlineAction;
     QAction* filterOfflineAction;
     QAction* filterFriendsAction;
+    QAction* filterConferencesAction;
     QAction* filterGroupsAction;
 
     QActionGroup* filterDisplayGroup;

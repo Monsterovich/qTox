@@ -259,6 +259,10 @@ void Widget::init()
     filterFriendsAction->setCheckable(true);
     filterGroup->addAction(filterFriendsAction);
     filterMenu->addAction(filterFriendsAction);
+    filterConferencesAction = new QAction(this);
+    filterConferencesAction->setCheckable(true);
+    filterGroup->addAction(filterConferencesAction);
+    filterMenu->addAction(filterConferencesAction);
     filterGroupsAction = new QAction(this);
     filterGroupsAction->setCheckable(true);
     filterGroup->addAction(filterGroupsAction);
@@ -2630,11 +2634,24 @@ void Widget::cycleChats(bool forward)
     chatListWidget->cycleChats(activeChatroomWidget, forward);
 }
 
+bool Widget::filterConferences(FilterCriteria index)
+{
+    switch (index) {
+    case FilterCriteria::Offline:
+    case FilterCriteria::Friends:
+    case FilterCriteria::Conferences:
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool Widget::filterGroups(FilterCriteria index)
 {
     switch (index) {
     case FilterCriteria::Offline:
     case FilterCriteria::Friends:
+    case FilterCriteria::Groups:
         return true;
     default:
         return false;
@@ -2646,6 +2663,7 @@ bool Widget::filterOffline(FilterCriteria index)
     switch (index) {
     case FilterCriteria::Online:
     case FilterCriteria::Conferences:
+    case FilterCriteria::Groups:
         return true;
     default:
         return false;
@@ -2657,6 +2675,7 @@ bool Widget::filterOnline(FilterCriteria index)
     switch (index) {
     case FilterCriteria::Offline:
     case FilterCriteria::Conferences:
+    case FilterCriteria::Groups:
         return true;
     default:
         return false;
@@ -2739,7 +2758,7 @@ void Widget::searchChats()
     const FilterCriteria filter = getFilterCriteria();
 
     chatListWidget->searchChatRooms(searchString, filterOnline(filter), filterOffline(filter),
-                                    filterGroups(filter));
+                                    filterConferences(filter), filterGroups(filter));
 
     updateFilterText();
 }
@@ -2778,8 +2797,10 @@ Widget::FilterCriteria Widget::getFilterCriteria() const
         return FilterCriteria::Offline;
     if (checked == filterFriendsAction)
         return FilterCriteria::Friends;
-    if (checked == filterGroupsAction)
+    if (checked == filterConferencesAction)
         return FilterCriteria::Conferences;
+    if (checked == filterGroupsAction)
+        return FilterCriteria::Groups;
 
     return FilterCriteria::All;
 }
@@ -2796,7 +2817,7 @@ void Widget::searchCircle(CircleWidget& circleWidget)
 bool Widget::conferencesVisible() const
 {
     const FilterCriteria filter = getFilterCriteria();
-    return !filterGroups(filter);
+    return !filterConferences(filter);
 }
 
 void Widget::friendListContextMenu(const QPoint& pos)
@@ -2912,7 +2933,8 @@ void Widget::retranslateUi()
     filterOnlineAction->setText(tr("Online"));
     filterOfflineAction->setText(tr("Offline"));
     filterFriendsAction->setText(tr("Friends"));
-    filterGroupsAction->setText(tr("Conferences"));
+    filterConferencesAction->setText(tr("Conferences"));
+    filterGroupsAction->setText(tr("Groups"));
     ui->searchContactText->setPlaceholderText(tr("Search Contacts"));
     updateFilterText();
 

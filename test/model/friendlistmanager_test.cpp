@@ -143,6 +143,64 @@ private:
 
 MockConference::~MockConference() = default;
 
+class MockGroup : public IFriendListItem
+{
+public:
+    explicit MockGroup(QString nameStr)
+        : name(std::move(nameStr))
+    {
+    }
+
+    ~MockGroup() override;
+
+    bool isFriend() const override
+    {
+        return false;
+    }
+    bool isConference() const override
+    {
+        return false;
+    }
+    bool isGroup() const override
+    {
+        return true;
+    }
+    bool isOnline() const override
+    {
+        return true;
+    }
+    void startCall() override {}
+    void stopCall() override {}
+    bool widgetIsVisible() const override
+    {
+        return visible;
+    }
+
+    QString getNameItem() const override
+    {
+        return name;
+    }
+    QDateTime getLastActivity() const override
+    {
+        return QDateTime::currentDateTime();
+    }
+    QWidget* getWidget() override
+    {
+        return nullptr;
+    }
+
+    void setWidgetVisible(bool v) override
+    {
+        visible = v;
+    }
+
+private:
+    QString name;
+    bool visible = true;
+};
+
+MockGroup::~MockGroup() = default;
+
 class FriendItemsBuilder
 {
 public:
@@ -459,12 +517,12 @@ void TestFriendListManager::testSetFilter()
         listBuilder.addOfflineFriends()->addOnlineFriends()->addConferences()->buildUnsorted());
     const QSignalSpy spy(manager.get(), &FriendListManager::itemsChanged);
 
-    manager->setFilter("", false, false, false);
+    manager->setFilter("", false, false, false, false);
 
     QCOMPARE(spy.count(), 0);
 
-    manager->setFilter("Test", true, false, false);
-    manager->setFilter("Test", true, false, false);
+    manager->setFilter("Test", true, false, false, false);
+    manager->setFilter("Test", true, false, false, false);
 
     QCOMPARE(spy.count(), 1);
 }
@@ -478,7 +536,7 @@ void TestFriendListManager::testApplyFilterSearchString()
     const QString testNameA = "NO_ITEMS_WITH_THIS_NAME";
     const QString testNameB = "Test Name B";
     manager->sortByName();
-    manager->setFilter(testNameA, false, false, false);
+    manager->setFilter(testNameA, false, false, false, false);
     manager->applyFilter();
 
     resultVec = manager->getItems();
@@ -507,7 +565,7 @@ void TestFriendListManager::testApplyFilterSearchString()
         }
     }
 
-    manager->setFilter("", false, false, false);
+    manager->setFilter("", false, false, false, false);
     manager->applyFilter();
 
     resultVec = manager->getItems();
@@ -525,8 +583,10 @@ void TestFriendListManager::testApplyFilterByStatus()
     auto offlineItems = listBuilder.addOfflineFriends()->buildSortedByName();
     auto conferenceItems = listBuilder.addConferences()->buildSortedByName();
     manager->sortByName();
+    manager->addFriendListItem(new MockGroup("test group"));
 
-    manager->setFilter("", true /*hideOnline*/, false /*hideOffline*/, false /*hideConferences*/);
+    manager->setFilter("", true /*hideOnline*/, false /*hideOffline*/, false /*hideConferences*/,
+                       false /*hideGroups*/);
     manager->applyFilter();
 
     for (auto item : manager->getItems()) {
@@ -537,7 +597,8 @@ void TestFriendListManager::testApplyFilterByStatus()
         }
     }
 
-    manager->setFilter("", false /*hideOnline*/, true /*hideOffline*/, false /*hideConferences*/);
+    manager->setFilter("", false /*hideOnline*/, true /*hideOffline*/, false /*hideConferences*/,
+                       false /*hideGroups*/);
     manager->applyFilter();
 
     for (auto item : manager->getItems()) {
@@ -548,7 +609,8 @@ void TestFriendListManager::testApplyFilterByStatus()
         }
     }
 
-    manager->setFilter("", false /*hideOnline*/, false /*hideOffline*/, true /*hideConferences*/);
+    manager->setFilter("", false /*hideOnline*/, false /*hideOffline*/, true /*hideConferences*/,
+                       false /*hideGroups*/);
     manager->applyFilter();
 
     for (auto item : manager->getItems()) {
@@ -559,14 +621,28 @@ void TestFriendListManager::testApplyFilterByStatus()
         }
     }
 
-    manager->setFilter("", true /*hideOnline*/, true /*hideOffline*/, true /*hideConferences*/);
+    manager->setFilter("", false /*hideOnline*/, false /*hideOffline*/, false /*hideConferences*/,
+                       true /*hideGroups*/);
+    manager->applyFilter();
+
+    for (auto item : manager->getItems()) {
+        if (item->isGroup()) {
+            QCOMPARE(item->widgetIsVisible(), false);
+        } else {
+            QCOMPARE(item->widgetIsVisible(), true);
+        }
+    }
+
+    manager->setFilter("", true /*hideOnline*/, true /*hideOffline*/, true /*hideConferences*/,
+                       true /*hideGroups*/);
     manager->applyFilter();
 
     for (auto item : manager->getItems()) {
         QCOMPARE(item->widgetIsVisible(), false);
     }
 
-    manager->setFilter("", false /*hideOnline*/, false /*hideOffline*/, false /*hideConferences*/);
+    manager->setFilter("", false /*hideOnline*/, false /*hideOffline*/, false /*hideConferences*/,
+                       false /*hideGroups*/);
     manager->applyFilter();
 
     for (auto item : manager->getItems()) {
