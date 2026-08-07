@@ -130,7 +130,6 @@ public slots:
     void groupInviteFriend(uint32_t friendId, int groupNumber);
     int createGroup(const QString& groupName);
     void quitGroup(int groupNumber);
-    void leaveAllGroups();
     void changeGroupTopic(uint32_t groupNumber, const QString& topic);
     bool setGroupPassword(int groupNumber, const QByteArray& password) override;
     bool setGroupPeerLimit(int groupNumber, uint16_t peerLimit) override;

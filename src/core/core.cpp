@@ -70,8 +70,6 @@ Core::Core(QThread* coreThread_, IBootstrapListGenerator& bootstrapListGenerator
     toxTimer->setSingleShot(true);
     connect(toxTimer, &QTimer::timeout, this, &Core::process);
     connect(coreThread_, &QThread::finished, toxTimer, &QTimer::stop);
-    connect(qApp, &QCoreApplication::aboutToQuit, this, &Core::leaveAllGroups,
-            Qt::DirectConnection);
 }
 
 Core::~Core()
@@ -1982,36 +1980,6 @@ void Core::quitGroup(int groupNumber)
         groupPeerCounts.remove(groupNumber);
         emit saveRequest();
         emit groupSelfDisconnected(groupNumber);
-    }
-}
-
-void Core::leaveAllGroups()
-{
-    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
-
-    for (auto it = groupReconnectTimers.cbegin(); it != groupReconnectTimers.cend(); ++it) {
-        it.value()->deleteLater();
-    }
-    groupReconnectTimers.clear();
-    groupPeerCounts.clear();
-
-    if (numberToGroupId.isEmpty()) {
-        return;
-    }
-
-    for (auto it = numberToGroupId.cbegin(); it != numberToGroupId.cend(); ++it) {
-        Tox_Err_Group_Leave error;
-        tox_group_leave(tox.get(), it.key(), nullptr, 0, &error);
-        if (!PARSE_ERR(error)) {
-            qWarning() << "Failed to leave group" << it.value().toString();
-        }
-    }
-    numberToGroupId.clear();
-    groupIdToNumber.clear();
-
-    // Let toxcore send out the leave packets before the Tox instance is torn down.
-    for (int i = 0; i < 10; ++i) {
-        tox_iterate(tox.get(), this);
     }
 }
 
