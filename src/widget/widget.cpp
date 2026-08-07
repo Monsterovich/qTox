@@ -674,6 +674,7 @@ Widget::~Widget()
     delete profileInfo;
     delete addFriendForm;
     delete conferenceInviteForm;
+    delete groupInviteForm;
     delete filesForm;
     delete timer;
     delete contentLayout;
