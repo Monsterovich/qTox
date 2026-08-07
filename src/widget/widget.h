@@ -192,6 +192,7 @@ public slots:
     void titleChangedByUser(const QString& title);
     void onConferencePeerAudioPlaying(uint32_t conferencenumber, ToxPk peerPk);
     void onConferenceSendFailed(uint32_t conferencenumber);
+    void onGroupSendFailed(uint32_t groupNumber);
     void onFriendTypingChanged(uint32_t friendNumber, bool isTyping);
     void nextChat();
     void previousChat();

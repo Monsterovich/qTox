@@ -768,6 +768,7 @@ void Widget::onCoreChanged(Core& core_)
     connect(core, &Core::friendTypingChanged, this, &Widget::onFriendTypingChanged);
     connect(core, &Core::conferenceSentFailed, this, &Widget::onConferenceSendFailed);
     connect(core, &Core::groupInviteReceived, this, &Widget::onGroupInviteReceived);
+    connect(core, &Core::groupSentFailed, this, &Widget::onGroupSendFailed);
     connect(core, &Core::usernameSet, this, &Widget::refreshPeerListsLocal);
 
     connect(this, &Widget::statusSet, core, &Core::setStatus);
@@ -2565,6 +2566,19 @@ void Widget::onConferenceSendFailed(uint32_t conferencenumber)
 
     const auto curTime = QDateTime::currentDateTime();
     auto* form = conferenceForms[conferenceId].data();
+    form->addSystemInfoMessage(curTime, SystemMessageType::messageSendFailed, {});
+}
+
+void Widget::onGroupSendFailed(uint32_t groupNumber)
+{
+    const GroupId& groupId = groupList->id2Key(groupNumber);
+    auto groupFormIt = groupForms.find(groupId);
+    if (groupFormIt == groupForms.end()) {
+        return;
+    }
+
+    const auto curTime = QDateTime::currentDateTime();
+    auto* form = groupFormIt.value().data();
     form->addSystemInfoMessage(curTime, SystemMessageType::messageSendFailed, {});
 }
 
