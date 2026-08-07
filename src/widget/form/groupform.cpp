@@ -315,12 +315,14 @@ void GroupForm::dropEvent(QDropEvent* ev)
 
 void GroupForm::keyPressEvent(QKeyEvent* ev)
 {
+    std::ignore = ev;
     if (msgEdit->hasFocus())
         return;
 }
 
 void GroupForm::keyReleaseEvent(QKeyEvent* ev)
 {
+    std::ignore = ev;
     if (msgEdit->hasFocus())
         return;
 }

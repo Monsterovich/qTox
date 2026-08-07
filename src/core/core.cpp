@@ -673,6 +673,7 @@ void Core::onGroupPassword(Tox* tox, uint32_t groupNumber, const uint8_t* passwo
                            void* vCore)
 {
     std::ignore = tox;
+    std::ignore = password;
     auto* const core = static_cast<Core*>(vCore);
     qDebug() << "Group" << groupNumber << "password changed, has password:" << (length != 0);
     emit core->groupPasswordChanged(groupNumber, length != 0);
