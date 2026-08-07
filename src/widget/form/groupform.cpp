@@ -213,13 +213,15 @@ void GroupForm::updateUserNames()
         const QString peerName = peers.value(peerPk);
         const QString editedName = editName(peerName);
         const QString icon = roleIcon(group->getPeerRole(peerPk));
-        auto* const label = new QLabel(icon + editedName.toHtmlEscaped() + QLatin1String(", "));
-        label->setProperty("peerSortName", editedName.toLower());
+        QLabel* label;
         if (icon.isEmpty()) {
+            label = new QLabel(editedName + QLatin1String(", "));
             label->setTextFormat(Qt::PlainText);
         } else {
+            label = new QLabel(icon + editedName.toHtmlEscaped() + QLatin1String(", "));
             label->setTextFormat(Qt::RichText);
         }
+        label->setProperty("peerSortName", editedName.toLower());
         if (editedName != peerName) {
             label->setToolTip(peerName + " (" + peerPk.toString() + ")");
         } else if (peerName != peerPk.toString()) {
