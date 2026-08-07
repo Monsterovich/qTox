@@ -1753,6 +1753,28 @@ QString Core::getGroupTitle(int groupNumber) const
 }
 
 /**
+ * @brief Get the topic of a group
+ */
+QString Core::getGroupTopic(int groupNumber) const
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_State_Query error;
+    const size_t length = tox_group_get_topic_size(tox.get(), groupNumber, &error);
+    if (!PARSE_ERR(error) || (length == 0u)) {
+        return QString{};
+    }
+
+    std::vector<uint8_t> topicBuf(length);
+    tox_group_get_topic(tox.get(), groupNumber, topicBuf.data(), &error);
+    if (!PARSE_ERR(error)) {
+        return QString{};
+    }
+
+    return ToxString(topicBuf.data(), length).getQString();
+}
+
+/**
  * @brief Accept a conference invite.
  * @param inviteInfo Object which contains info about conference invitation
  *

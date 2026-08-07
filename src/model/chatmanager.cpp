@@ -459,6 +459,7 @@ void ChatManager::onGroupTopicChanged(uint32_t groupNumber, const QString& topic
     assert(g);
 
     g->setTopic(QString(), topic);
+    settings.setGroupTopic(groupId.toString(), topic);
 }
 
 void ChatManager::onGroupSelfJoined(uint32_t groupNumber)
@@ -486,6 +487,11 @@ void ChatManager::onGroupSelfJoined(uint32_t groupNumber)
         if (!groupName.isEmpty()) {
             g->updateName(groupName);
             settings.setGroupName(groupId.toString(), groupName);
+        }
+        const QString groupTopic = core->getGroupTopic(groupNumber);
+        if (!groupTopic.isEmpty()) {
+            g->setTopic(QString(), groupTopic);
+            settings.setGroupTopic(groupId.toString(), groupTopic);
         }
     }
 }
@@ -647,6 +653,11 @@ Group* ChatManager::createGroup(uint32_t groupNumber, const GroupId& groupId, co
 
     newGroup->setPasswordSet(core->getGroupHasPassword(groupNumber));
     newGroup->setPeerLimit(core->getGroupPeerLimit(groupNumber));
+    QString topic = core->getGroupTopic(groupNumber);
+    if (topic.isEmpty()) {
+        topic = settings.getGroupTopic(groupId.toString());
+    }
+    newGroup->setTopic(QString(), topic);
     newGroup->setTopicLock(core->getGroupTopicLock(groupNumber));
     newGroup->setVoiceState(core->getGroupVoiceState(groupNumber));
     newGroup->setPrivacyState(core->getGroupPrivacyState(groupNumber));

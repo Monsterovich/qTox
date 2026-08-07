@@ -654,6 +654,12 @@ void Settings::loadPersonal(const Profile& profile, bool newProfile)
         for (auto it = names.constBegin(); it != names.constEnd(); ++it) {
             groupNames.insert(it.key(), it.value().toString());
         }
+        const QJsonObject topics =
+            QJsonDocument::fromJson(ps.value("groupTopics").toString().toUtf8()).object();
+        groupTopics.clear();
+        for (auto it = topics.constBegin(); it != topics.constEnd(); ++it) {
+            groupTopics.insert(it.key(), it.value().toString());
+        }
     });
 
     inGroup(ps, "Friends", [this, &ps] {
@@ -931,6 +937,12 @@ void Settings::savePersonal(QString profileName, const ToxEncrypt* passkey)
         }
         ps.setValue("groupNames",
                     QString::fromUtf8(QJsonDocument(names).toJson(QJsonDocument::Compact)));
+        QJsonObject topics;
+        for (auto it = groupTopics.cbegin(); it != groupTopics.cend(); ++it) {
+            topics.insert(it.key(), it.value());
+        }
+        ps.setValue("groupTopics",
+                    QString::fromUtf8(QJsonDocument(topics).toJson(QJsonDocument::Compact)));
     });
 
     inGroup(ps, "Version", [this, &ps] { //
@@ -1924,6 +1936,7 @@ void Settings::removeSavedGroup(const QString& groupIdHex)
     const QMutexLocker<QRecursiveMutex> locker{&bigLock};
     savedGroups.removeAll(groupIdHex);
     groupNames.remove(groupIdHex);
+    groupTopics.remove(groupIdHex);
 }
 
 QString Settings::getGroupName(const QString& groupIdHex) const
@@ -1939,6 +1952,22 @@ void Settings::setGroupName(const QString& groupIdHex, const QString& name)
         groupNames.remove(groupIdHex);
     } else {
         groupNames.insert(groupIdHex, name);
+    }
+}
+
+QString Settings::getGroupTopic(const QString& groupIdHex) const
+{
+    const QMutexLocker<QRecursiveMutex> locker{&bigLock};
+    return groupTopics.value(groupIdHex);
+}
+
+void Settings::setGroupTopic(const QString& groupIdHex, const QString& topic)
+{
+    const QMutexLocker<QRecursiveMutex> locker{&bigLock};
+    if (topic.isEmpty()) {
+        groupTopics.remove(groupIdHex);
+    } else {
+        groupTopics.insert(groupIdHex, topic);
     }
 }
 

@@ -490,6 +490,8 @@ public:
     void removeSavedGroup(const QString& groupIdHex);
     QString getGroupName(const QString& groupIdHex) const;
     void setGroupName(const QString& groupIdHex, const QString& name);
+    QString getGroupTopic(const QString& groupIdHex) const;
+    void setGroupTopic(const QString& groupIdHex, const QString& topic);
 
     // State
     QByteArray getWindowGeometry() const;
@@ -706,6 +708,7 @@ private:
     // Groups
     QStringList savedGroups;
     QHash<QString, QString> groupNames;
+    QHash<QString, QString> groupTopics;
 
     // Audio
     QString inDev;

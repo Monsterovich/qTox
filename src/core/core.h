@@ -93,6 +93,7 @@ public:
     QString getGroupPeerName(int groupNumber, int peerId) const override;
     ToxPk getGroupPeerPk(int groupNumber, int peerId) const override;
     QString getGroupTitle(int groupNumber) const override;
+    QString getGroupTopic(int groupNumber) const override;
     GroupRole getGroupPeerRole(int groupNumber, int peerId) const override;
     bool setGroupPeerRole(int groupNumber, int peerId, GroupRole role) override;
     bool kickGroupPeer(int groupNumber, int peerId) override;
