@@ -251,12 +251,13 @@ bool Group::setGroupPrivacyState(GroupPrivacyState privacyState_)
 
 bool Group::setGroupNickname(const QString& nickname_)
 {
-    if (groupQuery.setGroupSelfName(toxGroupNum, nickname_)) {
+    const QString nameToSet = nickname_.isEmpty() ? idHandler.getUsername() : nickname_;
+    if (groupQuery.setGroupSelfName(toxGroupNum, nameToSet)) {
         nickname = nickname_;
         emit nicknameChanged(nickname);
         const uint32_t selfPeerId = groupQuery.getGroupSelfPeerId(toxGroupNum);
         if (selfPeerId != std::numeric_limits<uint32_t>::max()) {
-            onPeerNameChanged(selfPeerId, nickname_);
+            onPeerNameChanged(selfPeerId, nameToSet);
         }
         return true;
     }
