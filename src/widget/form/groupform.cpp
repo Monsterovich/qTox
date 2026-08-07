@@ -21,6 +21,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QDragEnterEvent>
+#include <QIcon>
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QMenu>
@@ -472,13 +473,13 @@ void GroupForm::onTopicContextMenuRequested(const QPoint& localPos)
     
     statusMenu = contextMenu->addMenu(tr("My status"));
     const Status::Status currentStatus = group->getGroupStatus();
-    statusOnlineAction = statusMenu->addAction(tr("Online"));
+    statusOnlineAction = statusMenu->addAction(QIcon(Status::getIconPath(Status::Status::Online)), tr("Online"));
     statusOnlineAction->setCheckable(true);
     statusOnlineAction->setChecked(currentStatus == Status::Status::Online);
-    statusAwayAction = statusMenu->addAction(tr("Away"));
+    statusAwayAction = statusMenu->addAction(QIcon(Status::getIconPath(Status::Status::Away)), tr("Away"));
     statusAwayAction->setCheckable(true);
     statusAwayAction->setChecked(currentStatus == Status::Status::Away);
-    statusBusyAction = statusMenu->addAction(tr("Busy"));
+    statusBusyAction = statusMenu->addAction(QIcon(Status::getIconPath(Status::Status::Busy)), tr("Busy"));
     statusBusyAction->setCheckable(true);
     statusBusyAction->setChecked(currentStatus == Status::Status::Busy);
 
