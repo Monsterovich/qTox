@@ -581,7 +581,7 @@ void Core::onGroupPeerJoin(Tox* tox, uint32_t groupNumber, uint32_t peerId, void
 {
     std::ignore = tox;
     auto* const core = static_cast<Core*>(vCore);
-    qWarning("Group %u peer %u joined", groupNumber, peerId);
+    qDebug("Group %u peer %u joined", groupNumber, peerId);
     ++core->groupPeerCounts[groupNumber];
     core->stopGroupReconnectTimer(groupNumber);
     emit core->groupPeerJoined(groupNumber, peerId);
@@ -597,7 +597,7 @@ void Core::onGroupPeerExit(Tox* tox, uint32_t groupNumber, uint32_t peerId, Tox_
     std::ignore = partMessage;
     std::ignore = partMessageLength;
     auto* const core = static_cast<Core*>(vCore);
-    qWarning("Group %u peer %u left, exit type %d", groupNumber, peerId, static_cast<int>(exitType));
+    qDebug("Group %u peer %u left, exit type %d", groupNumber, peerId, static_cast<int>(exitType));
     auto it = core->groupPeerCounts.find(groupNumber);
     if (it != core->groupPeerCounts.end() && it.value() > 0) {
         if (it.value() == 1) {
@@ -624,7 +624,7 @@ void Core::onGroupSelfJoin(Tox* tox, uint32_t groupNumber, void* vCore)
 {
     std::ignore = tox;
     auto* const core = static_cast<Core*>(vCore);
-    qWarning("Joined group %u", groupNumber);
+    qDebug("Joined group %u", groupNumber);
     const GroupId groupId = core->getGroupPersistentId(groupNumber);
     if (!groupId.isEmpty()) {
         core->numberToGroupId[groupNumber] = groupId;
@@ -670,7 +670,7 @@ void Core::onGroupModeration(Tox* tox, uint32_t groupNumber, uint32_t sourcePeer
     std::ignore = targetPeerId;
     std::ignore = modType;
     auto* const core = static_cast<Core*>(vCore);
-    qWarning() << "Group" << groupNumber << "moderation event, refreshing peer roles";
+    qDebug() << "Group" << groupNumber << "moderation event, refreshing peer roles";
     emit core->groupPeerRolesChanged(groupNumber);
 }
 
