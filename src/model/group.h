@@ -79,6 +79,7 @@ public:
 
 signals:
     void titleChanged(const QString& author, const QString& title);
+    void titleChangedByUser(const QString& title);
     void topicChanged(const QString& author, const QString& topic);
     void userJoined(const ToxPk& user, const QString& name);
     void userLeft(const ToxPk& user, const QString& name);

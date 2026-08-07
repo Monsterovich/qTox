@@ -2347,6 +2347,8 @@ void Widget::onGroupModelAdded(Group* newGroup, std::shared_ptr<GroupRoom> chatr
                 }
                 chatListWidget->itemsChanged();
             });
+    connect(newGroup, &Group::titleChangedByUser, this,
+            [this, groupId](const QString& title) { settings.setGroupName(groupId.toString(), title); });
 }
 
 void Widget::onConferenceModelAdded(Conference* newConference, std::shared_ptr<ConferenceRoom> chatroom,

@@ -34,6 +34,7 @@ void Group::setName(const QString& newTitle)
     if (!shortTitle.isEmpty() && groupName != shortTitle) {
         groupName = shortTitle;
         emit displayedNameChanged(groupName);
+        emit titleChangedByUser(groupName);
         emit titleChanged(selfName, groupName);
     }
 }

@@ -483,10 +483,14 @@ void ChatManager::onGroupSelfJoined(uint32_t groupNumber)
         updateGroupNumber(g, groupNumber);
         addSelfToGroup(g);
         g->updatePeerRoles();
-        const QString groupName = core->getGroupTitle(groupNumber);
-        if (!groupName.isEmpty()) {
-            g->updateName(groupName);
-            settings.setGroupName(g->getPersistentId().toString(), groupName);
+        const QString alias = settings.getGroupName(g->getPersistentId().toString());
+        if (alias.isEmpty()) {
+            const QString groupName = core->getGroupTitle(groupNumber);
+            if (!groupName.isEmpty()) {
+                g->updateName(groupName);
+            }
+        } else if (alias != g->getName()) {
+            g->updateName(alias);
         }
         const QString groupTopic = core->getGroupTopic(groupNumber);
         if (!groupTopic.isEmpty()) {
