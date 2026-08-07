@@ -324,6 +324,7 @@ void Group::onPeerExit(uint32_t peerId)
     const ToxPk pk = resolvePeerPk(peerId);
     peerIdToPk.remove(peerId);
     peerStatuses.remove(pk);
+    peerRoles.remove(pk);
     auto it = peerDisplayNames.find(pk);
     if (it == peerDisplayNames.end()) {
         return;
