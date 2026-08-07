@@ -249,6 +249,25 @@ bool Group::setGroupPrivacyState(GroupPrivacyState privacyState_)
     return groupQuery.setGroupPrivacyState(toxGroupNum, privacyState_);
 }
 
+bool Group::setGroupNickname(const QString& nickname_)
+{
+    if (groupQuery.setGroupSelfName(toxGroupNum, nickname_)) {
+        nickname = nickname_;
+        emit nicknameChanged(nickname);
+        const uint32_t selfPeerId = groupQuery.getGroupSelfPeerId(toxGroupNum);
+        if (selfPeerId != std::numeric_limits<uint32_t>::max()) {
+            onPeerNameChanged(selfPeerId, nickname_);
+        }
+        return true;
+    }
+    return false;
+}
+
+QString Group::getGroupNickname() const
+{
+    return nickname;
+}
+
 QString Group::resolvePeerName(uint32_t peerId) const
 {
     const ToxPk pk = groupQuery.getGroupPeerPk(toxGroupNum, peerId);
@@ -298,15 +317,14 @@ void Group::onPeerExit(uint32_t peerId)
 void Group::onPeerNameChanged(uint32_t peerId, const QString& newName)
 {
     const ToxPk pk = groupQuery.getGroupPeerPk(toxGroupNum, peerId);
-    if (pk == idHandler.getSelfPublicKey()) {
-        return;
-    }
-
     peerIdToPk[peerId] = pk;
 
     const QString displayName = friendList.decideNickname(pk, newName);
     if (!peerDisplayNames.contains(pk)) {
         peerDisplayNames[pk] = displayName;
+        if (pk == idHandler.getSelfPublicKey()) {
+            selfName = displayName;
+        }
         emit userJoined(pk, displayName);
         emit numPeersChanged(peerDisplayNames.size());
         return;
@@ -315,6 +333,9 @@ void Group::onPeerNameChanged(uint32_t peerId, const QString& newName)
     if (peerDisplayNames[pk] != displayName) {
         const auto oldName = peerDisplayNames[pk];
         peerDisplayNames[pk] = displayName;
+        if (pk == idHandler.getSelfPublicKey()) {
+            selfName = displayName;
+        }
         emit peerNameChanged(pk, oldName, displayName);
     }
 }

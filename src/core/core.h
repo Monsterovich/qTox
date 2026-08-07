@@ -89,11 +89,13 @@ public:
     QString getFriendUsername(uint32_t friendNumber) const;
 
     uint32_t getGroupNumberPeers(int groupNumber) const;
-    uint32_t getGroupSelfPeerId(int groupNumber) const;
+    uint32_t getGroupSelfPeerId(int groupNumber) const override;
     QString getGroupPeerName(int groupNumber, int peerId) const override;
     ToxPk getGroupPeerPk(int groupNumber, int peerId) const override;
     QString getGroupTitle(int groupNumber) const override;
     QString getGroupTopic(int groupNumber) const override;
+    QString getGroupSelfName(int groupNumber) const override;
+    bool setGroupSelfName(int groupNumber, const QString& name) override;
     GroupRole getGroupPeerRole(int groupNumber, int peerId) const override;
     bool setGroupPeerRole(int groupNumber, int peerId, GroupRole role) override;
     bool kickGroupPeer(int groupNumber, int peerId) override;

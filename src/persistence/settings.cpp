@@ -660,6 +660,12 @@ void Settings::loadPersonal(const Profile& profile, bool newProfile)
         for (auto it = topics.constBegin(); it != topics.constEnd(); ++it) {
             groupTopics.insert(it.key(), it.value().toString());
         }
+        const QJsonObject nicknames =
+            QJsonDocument::fromJson(ps.value("groupNicknames").toString().toUtf8()).object();
+        groupNicknames.clear();
+        for (auto it = nicknames.constBegin(); it != nicknames.constEnd(); ++it) {
+            groupNicknames.insert(it.key(), it.value().toString());
+        }
     });
 
     inGroup(ps, "Friends", [this, &ps] {
@@ -943,6 +949,12 @@ void Settings::savePersonal(QString profileName, const ToxEncrypt* passkey)
         }
         ps.setValue("groupTopics",
                     QString::fromUtf8(QJsonDocument(topics).toJson(QJsonDocument::Compact)));
+        QJsonObject nicknames;
+        for (auto it = groupNicknames.cbegin(); it != groupNicknames.cend(); ++it) {
+            nicknames.insert(it.key(), it.value());
+        }
+        ps.setValue("groupNicknames",
+                    QString::fromUtf8(QJsonDocument(nicknames).toJson(QJsonDocument::Compact)));
     });
 
     inGroup(ps, "Version", [this, &ps] { //
@@ -1963,6 +1975,23 @@ void Settings::removeGroupAlias(const QString& groupIdHex)
 {
     const QMutexLocker<QRecursiveMutex> locker{&bigLock};
     groupNames.remove(groupIdHex);
+    requestSave();
+}
+
+QString Settings::getGroupNickname(const QString& groupIdHex) const
+{
+    const QMutexLocker<QRecursiveMutex> locker{&bigLock};
+    return groupNicknames.value(groupIdHex);
+}
+
+void Settings::setGroupNickname(const QString& groupIdHex, const QString& nickname)
+{
+    const QMutexLocker<QRecursiveMutex> locker{&bigLock};
+    if (nickname.isEmpty()) {
+        groupNicknames.remove(groupIdHex);
+    } else {
+        groupNicknames.insert(groupIdHex, nickname);
+    }
     requestSave();
 }
 

@@ -486,6 +486,10 @@ void ChatManager::onGroupSelfJoined(uint32_t groupNumber)
         if (!alias.isEmpty() && alias != g->getName()) {
             g->setName(alias);
         }
+        const QString nickname = settings.getGroupNickname(g->getPersistentId().toString());
+        if (!nickname.isEmpty()) {
+            g->setGroupNickname(nickname);
+        }
         const QString groupTopic = core->getGroupTopic(groupNumber);
         if (!groupTopic.isEmpty()) {
             g->setTopic(QString(), groupTopic);

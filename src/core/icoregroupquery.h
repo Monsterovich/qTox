@@ -56,6 +56,9 @@ public:
     virtual ToxPk getGroupPeerPk(int groupNumber, int peerId) const = 0;
     virtual QString getGroupTitle(int groupNumber) const = 0;
     virtual QString getGroupTopic(int groupNumber) const = 0;
+    virtual QString getGroupSelfName(int groupNumber) const = 0;
+    virtual bool setGroupSelfName(int groupNumber, const QString& name) = 0;
+    virtual uint32_t getGroupSelfPeerId(int groupNumber) const = 0;
     virtual GroupRole getGroupPeerRole(int groupNumber, int peerId) const = 0;
     virtual bool setGroupPeerRole(int groupNumber, int peerId, GroupRole role) = 0;
     virtual bool kickGroupPeer(int groupNumber, int peerId) = 0;

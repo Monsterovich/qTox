@@ -54,6 +54,7 @@ private slots:
     void onTopicContextMenuRequested(const QPoint& localPos);
     void editTopic();
     void setPassword();
+    void setNickname();
     void clearPassword();
     void setPeerLimit();
 

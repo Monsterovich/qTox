@@ -1779,6 +1779,49 @@ QString Core::getGroupTopic(int groupNumber) const
 }
 
 /**
+ * @brief Get the self name in a group
+ */
+QString Core::getGroupSelfName(int groupNumber) const
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_Self_Query error;
+    const size_t length = tox_group_self_get_name_size(tox.get(), groupNumber, &error);
+    if (!PARSE_ERR(error) || (length == 0u)) {
+        return QString{};
+    }
+
+    std::vector<uint8_t> nameBuf(length);
+    tox_group_self_get_name(tox.get(), groupNumber, nameBuf.data(), &error);
+    if (!PARSE_ERR(error)) {
+        return QString{};
+    }
+
+    return ToxString(nameBuf.data(), length).getQString();
+}
+
+/**
+ * @brief Set the self name in a group
+ */
+bool Core::setGroupSelfName(int groupNumber, const QString& name)
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    const ToxString toxName(name);
+    Tox_Err_Group_Self_Name_Set error;
+    const bool success = tox_group_self_set_name(tox.get(), groupNumber,
+                                                  reinterpret_cast<const uint8_t*>(toxName.data()),
+                                                  toxName.size(), &error);
+    if (!success) {
+        qWarning() << "Failed to set group self name for group" << groupNumber << ":"
+                   << static_cast<int>(error);
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * @brief Accept a conference invite.
  * @param inviteInfo Object which contains info about conference invitation
  *

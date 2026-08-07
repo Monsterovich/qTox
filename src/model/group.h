@@ -67,6 +67,8 @@ public:
     bool setGroupTopicLock(GroupTopicLock topicLock);
     bool setGroupVoiceState(GroupVoiceState voiceState);
     bool setGroupPrivacyState(GroupPrivacyState privacyState);
+    bool setGroupNickname(const QString& nickname);
+    QString getGroupNickname() const;
 
     void onPeerJoin(uint32_t peerId);
     void onPeerExit(uint32_t peerId);
@@ -91,6 +93,7 @@ signals:
     void topicLockChanged(GroupTopicLock topicLock);
     void voiceStateChanged(GroupVoiceState voiceState);
     void privacyStateChanged(GroupPrivacyState privacyState);
+    void nicknameChanged(const QString& nickname);
 
 private:
     QString resolvePeerName(uint32_t peerId) const;
@@ -102,6 +105,7 @@ private:
     QString groupName;
     QString toxcoreName;
     QString topic;
+    QString nickname;
     bool hasPassword = false;
     uint16_t peerLimit = 0;
     GroupTopicLock topicLock = GroupTopicLock::Unknown;

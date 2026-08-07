@@ -491,6 +491,8 @@ public:
     QString getGroupName(const QString& groupIdHex) const;
     void setGroupName(const QString& groupIdHex, const QString& name);
     void removeGroupAlias(const QString& groupIdHex);
+    QString getGroupNickname(const QString& groupIdHex) const;
+    void setGroupNickname(const QString& groupIdHex, const QString& nickname);
     QString getGroupTopic(const QString& groupIdHex) const;
     void setGroupTopic(const QString& groupIdHex, const QString& topic);
 
@@ -709,6 +711,7 @@ private:
     // Groups
     QStringList savedGroups;
     QHash<QString, QString> groupNames;
+    QHash<QString, QString> groupNicknames;
     QHash<QString, QString> groupTopics;
 
     // Audio

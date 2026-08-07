@@ -2355,6 +2355,10 @@ void Widget::onGroupModelAdded(Group* newGroup, std::shared_ptr<GroupRoom> chatr
                     settings.setGroupName(groupId.toString(), title);
                 }
             });
+    connect(newGroup, &Group::nicknameChanged, this,
+            [this, groupId](const QString& nickname) {
+                settings.setGroupNickname(groupId.toString(), nickname);
+            });
 }
 
 void Widget::onConferenceModelAdded(Conference* newConference, std::shared_ptr<ConferenceRoom> chatroom,

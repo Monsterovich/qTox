@@ -450,9 +450,11 @@ void GroupForm::onTopicContextMenuRequested(const QPoint& localPos)
     auto* copyIdAction = contextMenu->addAction(tr("Copy group ID"));
     const GroupRole selfRole = group->getPeerRole(core.getSelfPublicKey());
     QAction* setTopicAction = nullptr;
+    QAction* setNicknameAction = nullptr;
     if (canSetTopic()) {
         setTopicAction = contextMenu->addAction(tr("Set topic..."));
     }
+    setNicknameAction = contextMenu->addAction(tr("Set nickname..."));
 
     QAction* setPasswordAction = nullptr;
     QAction* clearPasswordAction = nullptr;
@@ -514,6 +516,8 @@ void GroupForm::onTopicContextMenuRequested(const QPoint& localPos)
         }
     } else if (selectedItem == setTopicAction) {
         editTopic();
+    } else if (selectedItem == setNicknameAction) {
+        setNickname();
     } else if (selectedItem == setPasswordAction) {
         setPassword();
     } else if (selectedItem == clearPasswordAction) {
@@ -544,6 +548,17 @@ void GroupForm::setPassword()
                                                    &ok);
     if (ok) {
         group->setGroupPassword(password.toUtf8());
+    }
+}
+
+void GroupForm::setNickname()
+{
+    bool ok = false;
+    const QString nickname = QInputDialog::getText(this, tr("Set nickname"),
+                                                   tr("Nickname:"), QLineEdit::Normal,
+                                                   group->getGroupNickname(), &ok);
+    if (ok) {
+        group->setGroupNickname(nickname);
     }
 }
 
