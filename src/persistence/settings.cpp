@@ -1959,6 +1959,13 @@ void Settings::setGroupName(const QString& groupIdHex, const QString& name)
     requestSave();
 }
 
+void Settings::removeGroupAlias(const QString& groupIdHex)
+{
+    const QMutexLocker<QRecursiveMutex> locker{&bigLock};
+    groupNames.remove(groupIdHex);
+    requestSave();
+}
+
 QString Settings::getGroupTopic(const QString& groupIdHex) const
 {
     const QMutexLocker<QRecursiveMutex> locker{&bigLock};

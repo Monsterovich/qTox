@@ -490,6 +490,7 @@ public:
     void removeSavedGroup(const QString& groupIdHex);
     QString getGroupName(const QString& groupIdHex) const;
     void setGroupName(const QString& groupIdHex, const QString& name);
+    void removeGroupAlias(const QString& groupIdHex);
     QString getGroupTopic(const QString& groupIdHex) const;
     void setGroupTopic(const QString& groupIdHex, const QString& topic);
 

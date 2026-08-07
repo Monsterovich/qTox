@@ -33,7 +33,7 @@ GroupWidget::GroupWidget(std::shared_ptr<GroupRoom> chatroom_, bool compact_, Se
     statusPic.setMargin(3);
 
     Group* g = chatroom->getGroup();
-    nameLabel->setText(g->getName());
+    nameLabel->setText(g->getDisplayedName());
 
     updateUserCount(g->getPeersCount());
     setAcceptDrops(true);
@@ -123,7 +123,7 @@ void GroupWidget::mouseMoveEvent(QMouseEvent* ev)
     if ((dragStartPos - ev->pos()).manhattanLength() > QApplication::startDragDistance()) {
         auto* mdata = new QMimeData;
         const Group* group = getGroup();
-        mdata->setText(group->getName());
+        mdata->setText(group->getDisplayedName());
         mdata->setData("groupId", group->getPersistentId().getByteArray());
 
         auto* drag = new QDrag(this);

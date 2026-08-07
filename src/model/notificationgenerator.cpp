@@ -109,7 +109,7 @@ NotificationData NotificationGenerator::groupMessageNotification(const Group* g,
         return ret;
     }
 
-    ret.title = g->getName();
+    ret.title = g->getDisplayedName();
     ret.message = message;
     ret.pixmap = getSenderAvatar(profile, sender);
 

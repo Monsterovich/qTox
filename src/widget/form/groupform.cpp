@@ -75,7 +75,7 @@ GroupForm::GroupForm(Core& core_, Group* chatGroup, IChatLog& chatLog_,
     fileButton->setProperty("state", "");
     headWidget->setMode(ChatFormHeader::Mode::None);
     headWidget->setNameEditable(false);
-    setName(group->getName());
+    setName(group->getDisplayedName());
 
     nusersLabel->setFont(Style::getFont(Style::Font::Medium));
     nusersLabel->setObjectName("statusLabel");

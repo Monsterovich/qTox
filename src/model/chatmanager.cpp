@@ -392,7 +392,7 @@ void ChatManager::onGroupMessageReceived(uint32_t groupNumber, uint32_t peerId, 
 void ChatManager::onEmptyGroupCreated(uint32_t groupNumber, const GroupId& groupId,
                                       const QString& groupName)
 {
-    Group* group = createGroup(groupNumber, groupId, groupName);
+    Group* group = createGroup(groupNumber, groupId, QString());
     if (group == nullptr) {
         return;
     }
@@ -400,6 +400,7 @@ void ChatManager::onEmptyGroupCreated(uint32_t groupNumber, const GroupId& group
         settings.addSavedGroup(groupId.toString());
         if (!groupName.isEmpty()) {
             settings.setGroupName(groupId.toString(), groupName);
+            group->setName(groupName);
         }
     }
     addSelfToGroup(group);
@@ -409,10 +410,7 @@ void ChatManager::onGroupJoined(uint32_t groupNumber, const GroupId& groupId)
 {
     Group* g = groupList.findGroup(groupId);
     if (g == nullptr) {
-        QString groupName = core->getGroupTitle(groupNumber);
-        if (groupName.isEmpty()) {
-            groupName = settings.getGroupName(groupId.toString());
-        }
+        const QString groupName = core->getGroupTitle(groupNumber);
         g = createGroup(groupNumber, groupId, groupName);
     } else {
         updateGroupNumber(g, groupNumber);
@@ -472,10 +470,7 @@ void ChatManager::onGroupSelfJoined(uint32_t groupNumber)
             g = groupList.findGroup(persistentId);
         }
         if (g == nullptr) {
-            QString groupName = core->getGroupTitle(groupNumber);
-            if (groupName.isEmpty()) {
-                groupName = settings.getGroupName(persistentId.toString());
-            }
+            const QString groupName = core->getGroupTitle(groupNumber);
             g = createGroup(groupNumber, persistentId, groupName);
         }
     }
@@ -483,14 +478,13 @@ void ChatManager::onGroupSelfJoined(uint32_t groupNumber)
         updateGroupNumber(g, groupNumber);
         addSelfToGroup(g);
         g->updatePeerRoles();
+        const QString groupName = core->getGroupTitle(groupNumber);
+        if (!groupName.isEmpty()) {
+            g->updateName(groupName);
+        }
         const QString alias = settings.getGroupName(g->getPersistentId().toString());
-        if (alias.isEmpty()) {
-            const QString groupName = core->getGroupTitle(groupNumber);
-            if (!groupName.isEmpty()) {
-                g->updateName(groupName);
-            }
-        } else if (alias != g->getName()) {
-            g->updateName(alias);
+        if (!alias.isEmpty() && alias != g->getName()) {
+            g->setName(alias);
         }
         const QString groupTopic = core->getGroupTopic(groupNumber);
         if (!groupTopic.isEmpty()) {
@@ -645,9 +639,6 @@ Group* ChatManager::createGroup(uint32_t groupNumber, const GroupId& groupId, co
     assert(core != nullptr);
 
     QString name = groupName;
-    if (name.isEmpty() && !groupId.isEmpty()) {
-        name = tr("Group %1").arg(groupId.toString().left(8));
-    }
 
     Group* g = groupList.findGroup(groupId);
     if (g != nullptr) {

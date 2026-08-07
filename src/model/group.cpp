@@ -19,7 +19,7 @@ Group::Group(int groupId_, const GroupId persistentGroupId, QString name, QStrin
     : groupQuery(groupQuery_)
     , idHandler(idHandler_)
     , selfName{std::move(selfName_)}
-    , groupName{std::move(name)}
+    , toxcoreName{std::move(name)}
     , toxGroupNum(groupId_)
     , groupId{persistentGroupId}
     , friendList{friendList_}
@@ -31,21 +31,21 @@ Group::Group(int groupId_, const GroupId persistentGroupId, QString name, QStrin
 void Group::setName(const QString& newTitle)
 {
     const QString shortTitle = newTitle.left(TOX_GROUP_MAX_GROUP_NAME_LENGTH);
-    if (!shortTitle.isEmpty() && groupName != shortTitle) {
+    if (groupName != shortTitle) {
         groupName = shortTitle;
-        emit displayedNameChanged(groupName);
+        emit displayedNameChanged(getDisplayedName());
         emit titleChangedByUser(groupName);
-        emit titleChanged(selfName, groupName);
+        emit titleChanged(selfName, getDisplayedName());
     }
 }
 
 void Group::updateName(const QString& newTitle)
 {
     const QString shortTitle = newTitle.left(TOX_GROUP_MAX_GROUP_NAME_LENGTH);
-    if (!shortTitle.isEmpty() && groupName != shortTitle) {
-        groupName = shortTitle;
-        emit displayedNameChanged(groupName);
-        emit titleChanged(selfName, groupName);
+    if (!shortTitle.isEmpty() && toxcoreName != shortTitle) {
+        toxcoreName = shortTitle;
+        emit displayedNameChanged(getDisplayedName());
+        emit titleChanged(selfName, getDisplayedName());
     }
 }
 
@@ -56,7 +56,13 @@ QString Group::getName() const
 
 QString Group::getDisplayedName() const
 {
-    return getName();
+    if (!groupName.isEmpty()) {
+        return groupName;
+    }
+    if (!toxcoreName.isEmpty()) {
+        return toxcoreName;
+    }
+    return tr("Group %1").arg(groupId.toString().left(8));
 }
 
 QString Group::getDisplayedName(const ToxPk& contact) const

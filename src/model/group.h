@@ -100,6 +100,7 @@ private:
     ICoreIdHandler& idHandler;
     QString selfName;
     QString groupName;
+    QString toxcoreName;
     QString topic;
     bool hasPassword = false;
     uint16_t peerLimit = 0;
