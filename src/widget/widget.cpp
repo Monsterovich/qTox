@@ -2111,21 +2111,21 @@ void Widget::onGroupInviteReceived(const GroupInvite& inviteInfo)
     const Friend* f = friendList->findFriend(friendPk);
     if (f != nullptr) {
         updateFriendActivity(*f);
-    }
 
-    if (settings.getAutoGroupInvite(f->getPublicKey())) {
-        onGroupInviteAccepted(inviteInfo);
-    } else {
-        if (!groupInviteForm->addGroupInvite(inviteInfo)) {
-            return;
-        }
+        if (settings.getAutoGroupInvite(f->getPublicKey())) {
+            onGroupInviteAccepted(inviteInfo);
+        } else {
+            if (!groupInviteForm->addGroupInvite(inviteInfo)) {
+                return;
+            }
 
-        ++unreadGroupInvites;
-        groupInvitesUpdate();
-        newMessageAlert(window(), isActiveWindow(), true, true);
-        if (notifier != nullptr) {
-            auto notificationData = notificationGenerator->groupInvitationNotification(f);
-            notifier->notifyMessage(notificationData);
+            ++unreadGroupInvites;
+            groupInvitesUpdate();
+            newMessageAlert(window(), isActiveWindow(), true, true);
+            if (notifier != nullptr) {
+                auto notificationData = notificationGenerator->groupInvitationNotification(f);
+                notifier->notifyMessage(notificationData);
+            }
         }
     }
 }
