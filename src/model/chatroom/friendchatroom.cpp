@@ -118,7 +118,9 @@ void FriendChatroom::inviteToNewGroup()
 {
     const auto friendId = frnd->getId();
     const auto groupId = core.createGroup(tr("Group %1").arg(groupList.getAllGroups().size() + 1));
-    core.groupInviteFriend(friendId, groupId);
+    if (groupId >= 0) {
+        core.groupInviteFriend(friendId, groupId);
+    }
 }
 
 void FriendChatroom::inviteFriend(const Group* group)
