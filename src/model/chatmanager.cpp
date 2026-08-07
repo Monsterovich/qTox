@@ -64,6 +64,7 @@ void ChatManager::connectToCore(Core& core_)
     connect(core, &Core::groupPeerJoined, this, &ChatManager::onGroupPeerJoined);
     connect(core, &Core::groupPeerExited, this, &ChatManager::onGroupPeerExited);
     connect(core, &Core::groupPeerNameChanged, this, &ChatManager::onGroupPeerNameChanged);
+    connect(core, &Core::groupPeerStatusChanged, this, &ChatManager::onGroupPeerStatusChanged);
     connect(core, &Core::groupTopicChanged, this, &ChatManager::onGroupTopicChanged);
     connect(core, &Core::groupSelfJoined, this, &ChatManager::onGroupSelfJoined);
     connect(core, &Core::groupSelfDisconnected, this, &ChatManager::onGroupSelfDisconnected);
@@ -448,6 +449,15 @@ void ChatManager::onGroupPeerNameChanged(uint32_t groupNumber, uint32_t peerId, 
     assert(g);
 
     g->onPeerNameChanged(peerId, newName);
+}
+
+void ChatManager::onGroupPeerStatusChanged(uint32_t groupNumber, uint32_t peerId, Status::Status status)
+{
+    const GroupId& groupId = groupList.id2Key(groupNumber);
+    Group* g = groupList.findGroup(groupId);
+    assert(g);
+
+    g->onPeerStatusChanged(peerId, status);
 }
 
 void ChatManager::onGroupTopicChanged(uint32_t groupNumber, const QString& topic)

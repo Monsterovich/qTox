@@ -96,6 +96,9 @@ public:
     QString getGroupTopic(int groupNumber) const override;
     QString getGroupSelfName(int groupNumber) const override;
     bool setGroupSelfName(int groupNumber, const QString& name) override;
+    Status::Status getGroupSelfStatus(int groupNumber) const override;
+    bool setGroupSelfStatus(int groupNumber, Status::Status status) override;
+    Status::Status getGroupPeerStatus(int groupNumber, int peerId) const override;
     GroupRole getGroupPeerRole(int groupNumber, int peerId) const override;
     bool setGroupPeerRole(int groupNumber, int peerId, GroupRole role) override;
     bool kickGroupPeer(int groupNumber, int peerId) override;
@@ -228,6 +231,7 @@ signals:
     void groupPeerJoined(uint32_t groupNumber, uint32_t peerId);
     void groupPeerExited(uint32_t groupNumber, uint32_t peerId);
     void groupPeerNameChanged(uint32_t groupNumber, uint32_t peerId, const QString& newName);
+    void groupPeerStatusChanged(uint32_t groupNumber, uint32_t peerId, Status::Status status);
     void groupTitleChanged(uint32_t groupNumber, const QString& author, const QString& title);
     void groupTopicChanged(uint32_t groupNumber, const QString& topic);
     void groupSentFailed(uint32_t groupNumber);
@@ -286,6 +290,8 @@ private:
                                 const uint8_t* partMessage, size_t partMessageLength, void* vCore);
     static void onGroupPeerNameChange(Tox* tox, uint32_t groupNumber, uint32_t peerId,
                                       const uint8_t* name, size_t length, void* vCore);
+    static void onGroupPeerStatusChange(Tox* tox, uint32_t groupNumber, uint32_t peerId,
+                                        Tox_User_Status status, void* vCore);
     static void onGroupSelfJoin(Tox* tox, uint32_t groupNumber, void* vCore);
     static void onGroupTopic(Tox* tox, uint32_t groupNumber, uint32_t peerId, const uint8_t* topic,
                              size_t length, void* vCore);

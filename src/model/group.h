@@ -69,12 +69,16 @@ public:
     bool setGroupPrivacyState(GroupPrivacyState privacyState);
     bool setGroupNickname(const QString& nickname);
     QString getGroupNickname() const;
+    bool setGroupStatus(Status::Status status);
+    Status::Status getGroupStatus() const;
 
     void onPeerJoin(uint32_t peerId);
     void onPeerExit(uint32_t peerId);
     void onPeerNameChanged(uint32_t peerId, const QString& newName);
+    void onPeerStatusChanged(uint32_t peerId, Status::Status status);
     void updatePeerRoles();
     GroupRole getPeerRole(const ToxPk& pk) const;
+    Status::Status getPeerStatus(const ToxPk& pk) const;
     bool setPeerRole(const ToxPk& pk, GroupRole role);
     bool kickPeer(const ToxPk& pk);
     ToxPk resolvePeerPk(uint32_t peerId) const;
@@ -87,6 +91,7 @@ signals:
     void userLeft(const ToxPk& user, const QString& name);
     void numPeersChanged(int numPeers);
     void peerNameChanged(const ToxPk& peer, const QString& oldName, const QString& newName);
+    void peerStatusChanged(const ToxPk& peer, Status::Status status);
     void peerRolesChanged();
     void passwordSetChanged(bool hasPassword);
     void peerLimitChanged(uint16_t peerLimit);
@@ -106,12 +111,14 @@ private:
     QString toxcoreName;
     QString topic;
     QString nickname;
+    Status::Status selfStatus = Status::Status::Online;
     bool hasPassword = false;
     uint16_t peerLimit = 0;
     GroupTopicLock topicLock = GroupTopicLock::Unknown;
     GroupVoiceState voiceState = GroupVoiceState::Unknown;
     GroupPrivacyState privacyState = GroupPrivacyState::Unknown;
     QMap<ToxPk, QString> peerDisplayNames;
+    QMap<ToxPk, Status::Status> peerStatuses;
     QMap<uint32_t, ToxPk> peerIdToPk;
     QMap<ToxPk, GroupRole> peerRoles;
     bool hasNewMessages;

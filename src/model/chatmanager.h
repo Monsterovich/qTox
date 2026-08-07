@@ -106,6 +106,7 @@ private slots:
     void onGroupPeerJoined(uint32_t groupNumber, uint32_t peerId);
     void onGroupPeerExited(uint32_t groupNumber, uint32_t peerId);
     void onGroupPeerNameChanged(uint32_t groupNumber, uint32_t peerId, const QString& newName);
+    void onGroupPeerStatusChanged(uint32_t groupNumber, uint32_t peerId, Status::Status status);
     void onGroupTopicChanged(uint32_t groupNumber, const QString& topic);
     void onGroupSelfJoined(uint32_t groupNumber);
     void onGroupSelfDisconnected(uint32_t groupNumber);

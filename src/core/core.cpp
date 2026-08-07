@@ -109,6 +109,7 @@ void Core::registerCallbacks(Tox* tox)
     tox_callback_group_peer_join(tox, onGroupPeerJoin);
     tox_callback_group_peer_exit(tox, onGroupPeerExit);
     tox_callback_group_peer_name(tox, onGroupPeerNameChange);
+    tox_callback_group_peer_status(tox, onGroupPeerStatusChange);
     tox_callback_group_self_join(tox, onGroupSelfJoin);
     tox_callback_group_topic(tox, onGroupTopic);
     tox_callback_group_join_fail(tox, onGroupJoinFail);
@@ -618,6 +619,16 @@ void Core::onGroupPeerNameChange(Tox* tox, uint32_t groupNumber, uint32_t peerId
     qDebug().nospace() << "Group " << groupNumber << ", peer " << peerId << ", name " << newName;
     auto* core = static_cast<Core*>(vCore);
     emit core->groupPeerNameChanged(groupNumber, peerId, newName);
+}
+
+void Core::onGroupPeerStatusChange(Tox* tox, uint32_t groupNumber, uint32_t peerId,
+                                   Tox_User_Status status, void* vCore)
+{
+    std::ignore = tox;
+    qDebug().nospace() << "Group " << groupNumber << ", peer " << peerId
+                       << ", status " << static_cast<int>(status);
+    auto* core = static_cast<Core*>(vCore);
+    emit core->groupPeerStatusChanged(groupNumber, peerId, static_cast<Status::Status>(status));
 }
 
 void Core::onGroupSelfJoin(Tox* tox, uint32_t groupNumber, void* vCore)
@@ -1819,6 +1830,57 @@ bool Core::setGroupSelfName(int groupNumber, const QString& name)
     }
 
     return true;
+}
+
+/**
+ * @brief Get the self status in a group
+ */
+Status::Status Core::getGroupSelfStatus(int groupNumber) const
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_Self_Query error;
+    const Tox_User_Status status = tox_group_self_get_status(tox.get(), groupNumber, &error);
+    if (!PARSE_ERR(error)) {
+        return Status::Status::Offline;
+    }
+
+    return static_cast<Status::Status>(status);
+}
+
+/**
+ * @brief Set the self status in a group
+ */
+bool Core::setGroupSelfStatus(int groupNumber, Status::Status status)
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_Self_Status_Set error;
+    const bool success = tox_group_self_set_status(tox.get(), groupNumber,
+                                                    static_cast<Tox_User_Status>(status), &error);
+    if (!success) {
+        qWarning() << "Failed to set group self status for group" << groupNumber << ":"
+                   << static_cast<int>(error);
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Get the status of a peer in a group
+ */
+Status::Status Core::getGroupPeerStatus(int groupNumber, int peerId) const
+{
+    const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
+
+    Tox_Err_Group_Peer_Query error;
+    const Tox_User_Status status = tox_group_peer_get_status(tox.get(), groupNumber, peerId, &error);
+    if (!PARSE_ERR(error)) {
+        return Status::Status::Offline;
+    }
+
+    return static_cast<Status::Status>(status);
 }
 
 /**

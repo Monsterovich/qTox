@@ -268,6 +268,24 @@ QString Group::getGroupNickname() const
     return nickname;
 }
 
+bool Group::setGroupStatus(Status::Status status)
+{
+    if (groupQuery.setGroupSelfStatus(toxGroupNum, status)) {
+        selfStatus = status;
+        const uint32_t selfPeerId = groupQuery.getGroupSelfPeerId(toxGroupNum);
+        if (selfPeerId != std::numeric_limits<uint32_t>::max()) {
+            onPeerStatusChanged(selfPeerId, status);
+        }
+        return true;
+    }
+    return false;
+}
+
+Status::Status Group::getGroupStatus() const
+{
+    return selfStatus;
+}
+
 QString Group::resolvePeerName(uint32_t peerId) const
 {
     const ToxPk pk = groupQuery.getGroupPeerPk(toxGroupNum, peerId);
@@ -284,6 +302,7 @@ void Group::onPeerJoin(uint32_t peerId)
     const ToxPk pk = groupQuery.getGroupPeerPk(toxGroupNum, peerId);
     peerIdToPk[peerId] = pk;
     peerRoles[pk] = groupQuery.getGroupPeerRole(toxGroupNum, peerId);
+    peerStatuses[pk] = groupQuery.getGroupPeerStatus(toxGroupNum, peerId);
     const QString name = resolvePeerName(peerId);
     if (peerDisplayNames.contains(pk)) {
         if (peerDisplayNames[pk] != name) {
@@ -303,6 +322,7 @@ void Group::onPeerExit(uint32_t peerId)
 {
     const ToxPk pk = resolvePeerPk(peerId);
     peerIdToPk.remove(peerId);
+    peerStatuses.remove(pk);
     auto it = peerDisplayNames.find(pk);
     if (it == peerDisplayNames.end()) {
         return;
@@ -340,6 +360,21 @@ void Group::onPeerNameChanged(uint32_t peerId, const QString& newName)
     }
 }
 
+void Group::onPeerStatusChanged(uint32_t peerId, Status::Status status)
+{
+    const ToxPk pk = groupQuery.getGroupPeerPk(toxGroupNum, peerId);
+    peerIdToPk[peerId] = pk;
+
+    if (pk == idHandler.getSelfPublicKey()) {
+        selfStatus = status;
+    }
+
+    if (peerStatuses.value(pk, Status::Status::Online) != status) {
+        peerStatuses[pk] = status;
+        emit peerStatusChanged(pk, status);
+    }
+}
+
 void Group::updatePeerRoles()
 {
     bool changed = false;
@@ -358,6 +393,11 @@ void Group::updatePeerRoles()
 GroupRole Group::getPeerRole(const ToxPk& pk) const
 {
     return peerRoles.value(pk, GroupRole::User);
+}
+
+Status::Status Group::getPeerStatus(const ToxPk& pk) const
+{
+    return peerStatuses.value(pk, Status::Status::Online);
 }
 
 bool Group::setPeerRole(const ToxPk& pk, GroupRole role)

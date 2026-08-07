@@ -105,6 +105,7 @@ GroupForm::GroupForm(Core& core_, Group* chatGroup, IChatLog& chatLog_,
     connect(group, &Group::userJoined, this, &GroupForm::onUserJoined);
     connect(group, &Group::userLeft, this, &GroupForm::onUserLeft);
     connect(group, &Group::peerNameChanged, this, &GroupForm::onPeerNameChanged);
+    connect(group, &Group::peerStatusChanged, this, &GroupForm::onPeerStatusChanged);
     connect(group, &Group::numPeersChanged, this, &GroupForm::updateUserCount);
     connect(group, &Group::peerRolesChanged, this, &GroupForm::updateUserNames);
     connect(topicLabel, &CroppingLabel::customContextMenuRequested, this,
@@ -212,13 +213,15 @@ void GroupForm::updateUserNames()
     for (const auto& peerPk : peers.keys()) {
         const QString peerName = peers.value(peerPk);
         const QString editedName = editName(peerName);
-        const QString icon = roleIcon(group->getPeerRole(peerPk));
+        const QString roleIconStr = roleIcon(group->getPeerRole(peerPk));
+        const Status::Status status = group->getPeerStatus(peerPk);
+        const QString statusIcon = QString("<img src='%1' width='12' height='12'/> ").arg(Status::getIconPath(status));
         QLabel* label;
-        if (icon.isEmpty()) {
-            label = new QLabel(editedName + QLatin1String(", "));
-            label->setTextFormat(Qt::PlainText);
+        if (roleIconStr.isEmpty()) {
+            label = new QLabel(statusIcon + editedName.toHtmlEscaped() + QLatin1String(", "));
+            label->setTextFormat(Qt::RichText);
         } else {
-            label = new QLabel(icon + editedName.toHtmlEscaped() + QLatin1String(", "));
+            label = new QLabel(statusIcon + roleIconStr + editedName.toHtmlEscaped() + QLatin1String(", "));
             label->setTextFormat(Qt::RichText);
         }
         label->setProperty("peerSortName", editedName.toLower());
@@ -284,6 +287,13 @@ void GroupForm::onPeerNameChanged(const ToxPk& peer, const QString& oldName, con
     std::ignore = peer;
     addSystemInfoMessage(QDateTime::currentDateTime(), SystemMessageType::peerNameChanged,
                          {oldName, newName});
+    updateUserNames();
+}
+
+void GroupForm::onPeerStatusChanged(const ToxPk& peer, Status::Status status)
+{
+    std::ignore = peer;
+    std::ignore = status;
     updateUserNames();
 }
 
@@ -451,10 +461,26 @@ void GroupForm::onTopicContextMenuRequested(const QPoint& localPos)
     const GroupRole selfRole = group->getPeerRole(core.getSelfPublicKey());
     QAction* setTopicAction = nullptr;
     QAction* setNicknameAction = nullptr;
+    QMenu* statusMenu = nullptr;
+    QAction* statusOnlineAction = nullptr;
+    QAction* statusAwayAction = nullptr;
+    QAction* statusBusyAction = nullptr;
     if (canSetTopic()) {
         setTopicAction = contextMenu->addAction(tr("Set topic..."));
     }
     setNicknameAction = contextMenu->addAction(tr("Set nickname..."));
+    
+    statusMenu = contextMenu->addMenu(tr("My status"));
+    const Status::Status currentStatus = group->getGroupStatus();
+    statusOnlineAction = statusMenu->addAction(tr("Online"));
+    statusOnlineAction->setCheckable(true);
+    statusOnlineAction->setChecked(currentStatus == Status::Status::Online);
+    statusAwayAction = statusMenu->addAction(tr("Away"));
+    statusAwayAction->setCheckable(true);
+    statusAwayAction->setChecked(currentStatus == Status::Status::Away);
+    statusBusyAction = statusMenu->addAction(tr("Busy"));
+    statusBusyAction->setCheckable(true);
+    statusBusyAction->setChecked(currentStatus == Status::Status::Busy);
 
     QAction* setPasswordAction = nullptr;
     QAction* clearPasswordAction = nullptr;
@@ -518,6 +544,12 @@ void GroupForm::onTopicContextMenuRequested(const QPoint& localPos)
         editTopic();
     } else if (selectedItem == setNicknameAction) {
         setNickname();
+    } else if (selectedItem == statusOnlineAction) {
+        group->setGroupStatus(Status::Status::Online);
+    } else if (selectedItem == statusAwayAction) {
+        group->setGroupStatus(Status::Status::Away);
+    } else if (selectedItem == statusBusyAction) {
+        group->setGroupStatus(Status::Status::Busy);
     } else if (selectedItem == setPasswordAction) {
         setPassword();
     } else if (selectedItem == clearPasswordAction) {
