@@ -1562,6 +1562,18 @@ instead of closing entirely.</source>
             <numerusform>%n пользователей в чате</numerusform>
         </translation>
     </message>
+    <message>
+        <source>mute</source>
+        <translation>выключить звук</translation>
+    </message>
+    <message>
+        <source>unmute</source>
+        <translation>включить звук</translation>
+    </message>
+    <message>
+        <source>copy peer ID</source>
+        <translation>скопировать идентификатор узла</translation>
+    </message>
 </context>
 <context>
     <name>IdentitySettings</name>
