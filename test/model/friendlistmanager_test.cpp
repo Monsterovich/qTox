@@ -38,6 +38,10 @@ public:
     {
         return false;
     }
+    bool isGroup() const override
+    {
+        return false;
+    }
     bool isOnline() const override
     {
         return online;
@@ -98,6 +102,10 @@ public:
     bool isConference() const override
     {
         return true;
+    }
+    bool isGroup() const override
+    {
+        return false;
     }
     bool isOnline() const override
     {

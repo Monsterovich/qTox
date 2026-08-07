@@ -112,7 +112,7 @@ void FriendListManager::applyFilter()
             itemTmp->setWidgetVisible(false);
         }
 
-        if (filterParams.hideConferences && itemTmp->isConference()) {
+        if (filterParams.hideConferences && (itemTmp->isConference() || itemTmp->isGroup())) {
             itemTmp->setWidgetVisible(false);
         }
     }

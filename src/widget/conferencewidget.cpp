@@ -210,6 +210,11 @@ bool ConferenceWidget::isConference() const
     return true;
 }
 
+bool ConferenceWidget::isGroup() const
+{
+    return false;
+}
+
 QString ConferenceWidget::getNameItem() const
 {
     return nameLabel->fullText();

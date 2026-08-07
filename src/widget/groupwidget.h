@@ -34,6 +34,7 @@ public:
 
     bool isFriend() const final;
     bool isConference() const final;
+    bool isGroup() const final;
     QString getNameItem() const final;
     bool isOnline() const final;
     void startCall() final;

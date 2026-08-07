@@ -392,6 +392,11 @@ bool FriendWidget::isConference() const
     return false;
 }
 
+bool FriendWidget::isGroup() const
+{
+    return false;
+}
+
 bool FriendWidget::isOnline() const
 {
     const auto* const frnd = getFriend();

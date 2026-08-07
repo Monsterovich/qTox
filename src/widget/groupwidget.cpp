@@ -198,6 +198,11 @@ bool GroupWidget::isConference() const
     return false;
 }
 
+bool GroupWidget::isGroup() const
+{
+    return true;
+}
+
 QString GroupWidget::getNameItem() const
 {
     return nameLabel->fullText();
