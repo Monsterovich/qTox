@@ -2033,25 +2033,29 @@ void Core::retryGroupReconnect(uint32_t groupNumber)
 
 void Core::startGroupReconnectTimer(uint32_t groupNumber)
 {
-    if (groupReconnectTimers.contains(groupNumber)) {
-        return;
-    }
+    QMetaObject::invokeMethod(this, [this, groupNumber] {
+        if (groupReconnectTimers.contains(groupNumber)) {
+            return;
+        }
 
-    auto* timer = new QTimer(this);
-    timer->setInterval(GROUP_RECONNECT_INTERVAL_MS);
-    connect(timer, &QTimer::timeout, this,
-            [this, groupNumber] { retryGroupReconnect(groupNumber); });
-    groupReconnectTimers[groupNumber] = timer;
-    QMetaObject::invokeMethod(this, [timer] { timer->start(); }, Qt::QueuedConnection);
+        auto* timer = new QTimer(this);
+        timer->setInterval(GROUP_RECONNECT_INTERVAL_MS);
+        connect(timer, &QTimer::timeout, this,
+                [this, groupNumber] { retryGroupReconnect(groupNumber); });
+        groupReconnectTimers[groupNumber] = timer;
+        timer->start();
+    });
 }
 
 void Core::stopGroupReconnectTimer(uint32_t groupNumber)
 {
-    auto it = groupReconnectTimers.find(groupNumber);
-    if (it != groupReconnectTimers.end()) {
-        it.value()->deleteLater();
-        groupReconnectTimers.erase(it);
-    }
+    QMetaObject::invokeMethod(this, [this, groupNumber] {
+        auto it = groupReconnectTimers.find(groupNumber);
+        if (it != groupReconnectTimers.end()) {
+            it.value()->deleteLater();
+            groupReconnectTimers.erase(it);
+        }
+    });
 }
 
 /**
