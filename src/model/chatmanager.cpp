@@ -486,12 +486,12 @@ void ChatManager::onGroupSelfJoined(uint32_t groupNumber)
         const QString groupName = core->getGroupTitle(groupNumber);
         if (!groupName.isEmpty()) {
             g->updateName(groupName);
-            settings.setGroupName(groupId.toString(), groupName);
+            settings.setGroupName(g->getPersistentId().toString(), groupName);
         }
         const QString groupTopic = core->getGroupTopic(groupNumber);
         if (!groupTopic.isEmpty()) {
             g->setTopic(QString(), groupTopic);
-            settings.setGroupTopic(groupId.toString(), groupTopic);
+            settings.setGroupTopic(g->getPersistentId().toString(), groupTopic);
         }
     }
 }
