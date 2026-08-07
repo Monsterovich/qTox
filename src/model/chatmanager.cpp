@@ -530,7 +530,9 @@ void ChatManager::onGroupSelfDisconnected(uint32_t groupNumber)
 {
     const GroupId& groupId = groupList.id2Key(groupNumber);
     Group* g = groupList.findGroup(groupId);
-    assert(g);
+    if (g != nullptr) {
+        g->clearPeers();
+    }
 }
 
 void ChatManager::onGroupJoinFailed(uint32_t groupNumber)

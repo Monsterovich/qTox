@@ -336,6 +336,15 @@ void Group::onPeerExit(uint32_t peerId)
     emit numPeersChanged(peerDisplayNames.size());
 }
 
+void Group::clearPeers()
+{
+    peerIdToPk.clear();
+    peerStatuses.clear();
+    peerRoles.clear();
+    peerDisplayNames.clear();
+    emit numPeersChanged(0);
+}
+
 void Group::onPeerNameChanged(uint32_t peerId, const QString& newName)
 {
     const ToxPk pk = groupQuery.getGroupPeerPk(toxGroupNum, peerId);

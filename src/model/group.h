@@ -74,6 +74,7 @@ public:
 
     void onPeerJoin(uint32_t peerId);
     void onPeerExit(uint32_t peerId);
+    void clearPeers();
     void onPeerNameChanged(uint32_t peerId, const QString& newName);
     void onPeerStatusChanged(uint32_t peerId, Status::Status status);
     void updatePeerRoles();
