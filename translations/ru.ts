@@ -1963,6 +1963,18 @@ Press Shift+F1 for more information.</source>
         <translation>Открыть страницу управления конференцией</translation>
     </message>
     <message>
+        <source>Create a group</source>
+        <translation>Создать группу</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>Группа</translation>
+    </message>
+    <message>
+        <source>Open group management page</source>
+        <translation>Открыть страницу управления группой</translation>
+    </message>
+    <message>
         <source>File transfers history</source>
         <translation>История передачи файлов</translation>
     </message>
