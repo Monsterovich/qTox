@@ -2639,7 +2639,7 @@ bool Widget::filterConferences(FilterCriteria index)
     switch (index) {
     case FilterCriteria::Offline:
     case FilterCriteria::Friends:
-    case FilterCriteria::Conferences:
+    case FilterCriteria::Groups:
         return true;
     default:
         return false;
@@ -2651,7 +2651,7 @@ bool Widget::filterGroups(FilterCriteria index)
     switch (index) {
     case FilterCriteria::Offline:
     case FilterCriteria::Friends:
-    case FilterCriteria::Groups:
+    case FilterCriteria::Conferences:
         return true;
     default:
         return false;
