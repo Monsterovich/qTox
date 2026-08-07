@@ -526,7 +526,9 @@ void ChatManager::onGroupJoinFailed(uint32_t groupNumber)
     const GroupId& groupId = groupList.id2Key(groupNumber);
     Group* g = groupList.findGroup(groupId);
     if (g != nullptr) {
-        removeGroup(groupId);
+        // The UI must be torn down before the model, otherwise the GroupForm
+        // keeps a dangling reference to the chat log.
+        emit groupRemoved(groupId);
     }
 }
 

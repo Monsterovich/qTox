@@ -274,6 +274,8 @@ void Widget::init()
     connect(chatManager.get(), &ChatManager::conferenceAdded, this, &Widget::onConferenceModelAdded);
     connect(chatManager.get(), &ChatManager::conferenceNeedsName, this, &Widget::onConferenceNeedsName);
     connect(chatManager.get(), &ChatManager::groupAdded, this, &Widget::onGroupModelAdded);
+    connect(chatManager.get(), &ChatManager::groupRemoved, this,
+            [this](const GroupId& groupId) { removeGroup(groupList->findGroup(groupId), true); });
 
     chatListWidget =
         new FriendListWidget(*core, this, settings, style, *messageBoxManager, *friendList,
