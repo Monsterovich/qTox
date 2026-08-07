@@ -1989,9 +1989,8 @@ void Core::quitGroup(int groupNumber)
     if (PARSE_ERR(error)) {
         const auto groupIdIt = numberToGroupId.find(groupNumber);
         if (groupIdIt != numberToGroupId.end()) {
-            const GroupId& groupId = *groupIdIt;
+            groupIdToNumber.remove(*groupIdIt);
             numberToGroupId.erase(groupIdIt);
-            groupIdToNumber.remove(groupId);
         }
         stopGroupReconnectTimer(groupNumber);
         groupPeerCounts.remove(groupNumber);
