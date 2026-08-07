@@ -1921,6 +1921,7 @@ void Settings::setSavedGroups(const QStringList& glist)
 {
     const QMutexLocker<QRecursiveMutex> locker{&bigLock};
     savedGroups = glist;
+    requestSave();
 }
 
 void Settings::addSavedGroup(const QString& groupIdHex)
@@ -1928,6 +1929,7 @@ void Settings::addSavedGroup(const QString& groupIdHex)
     const QMutexLocker<QRecursiveMutex> locker{&bigLock};
     if (!savedGroups.contains(groupIdHex)) {
         savedGroups.append(groupIdHex);
+        requestSave();
     }
 }
 
@@ -1937,6 +1939,7 @@ void Settings::removeSavedGroup(const QString& groupIdHex)
     savedGroups.removeAll(groupIdHex);
     groupNames.remove(groupIdHex);
     groupTopics.remove(groupIdHex);
+    requestSave();
 }
 
 QString Settings::getGroupName(const QString& groupIdHex) const
@@ -1953,6 +1956,7 @@ void Settings::setGroupName(const QString& groupIdHex, const QString& name)
     } else {
         groupNames.insert(groupIdHex, name);
     }
+    requestSave();
 }
 
 QString Settings::getGroupTopic(const QString& groupIdHex) const
@@ -1969,6 +1973,7 @@ void Settings::setGroupTopic(const QString& groupIdHex, const QString& topic)
     } else {
         groupTopics.insert(groupIdHex, topic);
     }
+    requestSave();
 }
 
 QString Settings::getInDev() const
