@@ -438,6 +438,8 @@ void GroupForm::onTopicContextMenuRequested(const QPoint& localPos)
     auto* const contextMenu = new QMenu(this);
     contextMenu->setStyleSheet(style.getStylesheet("chatArea/chatHead.qss", settings));
 
+    connect(contextMenu, &QMenu::aboutToHide, contextMenu, &QObject::deleteLater);
+
     auto* copyTopicAction = contextMenu->addAction(tr("Copy topic"));
     auto* copyIdAction = contextMenu->addAction(tr("Copy group ID"));
     const GroupRole selfRole = group->getPeerRole(core.getSelfPublicKey());
