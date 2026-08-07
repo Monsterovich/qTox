@@ -651,6 +651,10 @@ Widget::~Widget()
         removeConference(c, true);
     }
 
+    for (Group* g : groupList->getAllGroups()) {
+        removeGroup(g, true);
+    }
+
     for (Friend* f : friendList->getAllFriends()) {
         removeFriend(f, true);
     }
