@@ -2332,7 +2332,7 @@ void Widget::onGroupModelAdded(Group* newGroup, std::shared_ptr<GroupRoom> chatr
     auto widgetRemoveGroup = QOverload<const GroupId&>::of(&Widget::removeGroup);
     connect(widget, &GroupWidget::removeGroup, this, widgetRemoveGroup);
     connect(widget, &GroupWidget::middleMouseClicked, this,
-            [this, groupId]() { removeGroup(groupId); });
+            [this, groupId]() { removeGroup(groupId); }, Qt::QueuedConnection);
     connect(widget, &GroupWidget::chatroomWidgetClicked, form, &GenericChatForm::focusInput);
     connect(newGroup, &Group::titleChanged, this,
             [this, groupId](const QString& /* author */, const QString& title) {
