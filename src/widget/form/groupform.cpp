@@ -292,8 +292,9 @@ void GroupForm::dragEnterEvent(QDragEnterEvent* ev)
     }
     const ToxPk toxPk{ev->mimeData()->data("toxPk")};
     Friend* frnd = friendList.findFriend(toxPk);
-    if (frnd != nullptr)
+    if (frnd != nullptr) {
         ev->acceptProposedAction();
+    }
 }
 
 void GroupForm::dropEvent(QDropEvent* ev)
@@ -303,8 +304,9 @@ void GroupForm::dropEvent(QDropEvent* ev)
     }
     const ToxPk toxPk{ev->mimeData()->data("toxPk")};
     Friend* frnd = friendList.findFriend(toxPk);
-    if (frnd == nullptr)
+    if (frnd == nullptr) {
         return;
+    }
 
     const uint32_t friendId = frnd->getId();
     const uint32_t groupNumber = group->getId();
@@ -316,15 +318,17 @@ void GroupForm::dropEvent(QDropEvent* ev)
 void GroupForm::keyPressEvent(QKeyEvent* ev)
 {
     std::ignore = ev;
-    if (msgEdit->hasFocus())
+    if (msgEdit->hasFocus()) {
         return;
+    }
 }
 
 void GroupForm::keyReleaseEvent(QKeyEvent* ev)
 {
     std::ignore = ev;
-    if (msgEdit->hasFocus())
+    if (msgEdit->hasFocus()) {
         return;
+    }
 }
 
 /**
