@@ -131,7 +131,9 @@ bool GroupInviteForm::addGroupInvite(const GroupInvite& inviteInfo)
 {
     // supress duplicate invite messages
     for (GroupInviteWidget* existing : invites) {
-        if (existing->getInviteInfo() == inviteInfo) {
+        const GroupInvite& existingInvite = existing->getInviteInfo();
+        if (existingInvite.getFriendId() == inviteInfo.getFriendId()
+            && existingInvite.getInviteData() == inviteInfo.getInviteData()) {
             return false;
         }
     }
