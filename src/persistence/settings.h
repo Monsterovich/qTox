@@ -484,7 +484,7 @@ public:
     SIGNAL_IMPL(Settings, showConferenceJoinLeaveMessagesChanged, bool show)
 
     // Groups
-    QStringList getSavedGroups() const;
+    QStringList getSavedGroups() const override;
     void setSavedGroups(const QStringList& glist);
     void addSavedGroup(const QString& groupIdHex);
     void removeSavedGroup(const QString& groupIdHex);
