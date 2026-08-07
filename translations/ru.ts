@@ -1456,6 +1456,13 @@ instead of closing entirely.</source>
     </message>
 </context>
 <context>
+    <name>Group</name>
+    <message>
+        <source>Group %1</source>
+        <translation>Группа %1</translation>
+    </message>
+</context>
+<context>
     <name>GroupForm</name>
     <message>
         <source>promote to moderator</source>
@@ -1573,6 +1580,34 @@ instead of closing entirely.</source>
     <message>
         <source>copy peer ID</source>
         <translation>скопировать идентификатор узла</translation>
+    </message>
+    <message>
+        <source>Set nickname...</source>
+        <translation>Установить никнейм...</translation>
+    </message>
+    <message>
+        <source>My status</source>
+        <translation>Мой статус</translation>
+    </message>
+    <message>
+        <source>Online</source>
+        <translation>В сети</translation>
+    </message>
+    <message>
+        <source>Away</source>
+        <translation>Отошёл</translation>
+    </message>
+    <message>
+        <source>Busy</source>
+        <translation>Занят</translation>
+    </message>
+    <message>
+        <source>Set nickname</source>
+        <translation>Установить никнейм</translation>
+    </message>
+    <message>
+        <source>Nickname:</source>
+        <translation>Никнейм:</translation>
     </message>
 </context>
 <context>
