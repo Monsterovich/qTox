@@ -1951,6 +1951,7 @@ void Settings::removeSavedGroup(const QString& groupIdHex)
     savedGroups.removeAll(groupIdHex);
     groupNames.remove(groupIdHex);
     groupTopics.remove(groupIdHex);
+    groupNicknames.remove(groupIdHex);
     requestSave();
 }
 
