@@ -485,6 +485,11 @@ void Widget::init()
 
     ui->addButton->setCheckable(true);
     ui->conferenceButton->setCheckable(true);
+    ui->groupButton->setCheckable(true);
+    QIcon groupButtonIcon;
+    groupButtonIcon.addPixmap(QPixmap(":/img/group.svg"), QIcon::Normal);
+    groupButtonIcon.addPixmap(QPixmap(":/img/group_dark.svg"), QIcon::Disabled);
+    ui->groupButton->setIcon(groupButtonIcon);
     ui->transferButton->setCheckable(true);
     ui->settingsButton->setCheckable(true);
     ui->debugButton->setCheckable(true);
