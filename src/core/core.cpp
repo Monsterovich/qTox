@@ -654,6 +654,11 @@ void Core::onGroupJoinFail(Tox* tox, uint32_t groupNumber, Tox_Group_Join_Fail f
     qWarning() << "Group join failed for group" << groupNumber;
     core->stopGroupReconnectTimer(groupNumber);
     core->groupPeerCounts.remove(groupNumber);
+    const auto groupIdIt = core->numberToGroupId.find(groupNumber);
+    if (groupIdIt != core->numberToGroupId.end()) {
+        core->groupIdToNumber.remove(*groupIdIt);
+        core->numberToGroupId.erase(groupIdIt);
+    }
     emit core->groupJoinFailed(groupNumber);
 }
 
@@ -1905,6 +1910,18 @@ uint32_t Core::joinGroup(const GroupInvite& inviteInfo)
     const QByteArray invite = inviteInfo.getInviteData();
     const auto* const inviteData = reinterpret_cast<const uint8_t*>(invite.constData());
     const size_t inviteLength = invite.size();
+
+    if (inviteLength < TOX_GROUP_CHAT_ID_SIZE) {
+        qWarning() << "joinGroup: invite data too short";
+        return std::numeric_limits<uint32_t>::max();
+    }
+
+    const GroupId groupId(inviteData);
+    if (groupIdToNumber.contains(groupId)) {
+        qDebug() << "joinGroup: already in group" << groupId.toString();
+        return groupIdToNumber[groupId];
+    }
+
     const ToxString cSelfName(getUsername());
 
     qDebug() << "Trying to accept invite for group sent by friend" << friendId;
@@ -1917,7 +1934,6 @@ uint32_t Core::joinGroup(const GroupInvite& inviteInfo)
         return std::numeric_limits<uint32_t>::max();
     }
 
-    const GroupId groupId = getGroupPersistentId(groupNumber);
     numberToGroupId[groupNumber] = groupId;
     groupIdToNumber[groupId] = groupNumber;
     startGroupReconnectTimer(groupNumber);

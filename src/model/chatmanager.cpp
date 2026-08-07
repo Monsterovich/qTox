@@ -525,9 +525,9 @@ void ChatManager::onGroupJoinFailed(uint32_t groupNumber)
 {
     const GroupId& groupId = groupList.id2Key(groupNumber);
     Group* g = groupList.findGroup(groupId);
-    assert(g);
-
-    removeGroup(groupId);
+    if (g != nullptr) {
+        removeGroup(groupId);
+    }
 }
 
 void ChatManager::onGroupPeerRolesChanged(uint32_t groupNumber)
