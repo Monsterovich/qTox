@@ -61,7 +61,8 @@ ChatMessage::Ptr createMessage(const QString& displayName, bool isSelf, bool col
     const auto timestamp = chatLogMessage.message.timestamp;
     return ChatMessage::createChatMessage(displayName, chatLogMessage.message.content, messageType,
                                           isSelf, chatLogMessage.state, timestamp, documentCache,
-                                          smileyPack, settings, style, colorizeNames, isPrivate);
+                                          smileyPack, settings, style, colorizeNames, isPrivate,
+                                          chatLogMessage.message.recipientName);
 }
 
 void renderMessageRaw(const QString& displayName, bool isSelf, bool colorizeNames,

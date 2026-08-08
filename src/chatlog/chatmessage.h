@@ -49,7 +49,8 @@ public:
                                               const QDateTime& date, DocumentCache& documentCache,
                                               SmileyPack& smileyPack, Settings& settings,
                                               Style& style, bool colorizeName = false,
-                                              bool isPrivate = false);
+                                              bool isPrivate = false,
+                                              const QString& recipientName = QString());
     static ChatMessage::Ptr createChatInfoMessage(const QString& rawMessage, SystemMessageType type,
                                                   const QDateTime& date, DocumentCache& documentCache,
                                                   Settings& settings, Style& style);

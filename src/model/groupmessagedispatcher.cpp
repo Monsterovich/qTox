@@ -50,6 +50,7 @@ GroupMessageDispatcher::sendPrivateMessage(uint32_t peerId, bool isAction, const
     const auto firstMessageId = nextMessageId;
     auto lastMessageId = firstMessageId;
     const ToxPk recipientPk = group.resolvePeerPk(peerId);
+    const QString recipientName = group.getDisplayedName(recipientPk);
 
     for (const auto& message : processor.processOutgoingMessage(isAction, content)) {
         auto messageId = nextMessageId++;
@@ -58,6 +59,7 @@ GroupMessageDispatcher::sendPrivateMessage(uint32_t peerId, bool isAction, const
 
         Message messageWithRecipient = message;
         messageWithRecipient.recipient = recipientPk;
+        messageWithRecipient.recipientName = recipientName;
         emit messageSent(messageId, messageWithRecipient);
         emit messageComplete(messageId);
     }
@@ -104,5 +106,6 @@ void GroupMessageDispatcher::onPrivateMessageReceived(const ToxPk& sender, bool 
 
     Message message = processor.processIncomingCoreMessage(isAction, content);
     message.recipient = idHandler.getSelfPublicKey();
+    message.recipientName = idHandler.getUsername();
     emit messageReceived(sender, message);
 }

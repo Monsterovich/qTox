@@ -40,6 +40,7 @@ struct Message
     QDateTime timestamp;
     std::vector<MessageMetadata> metadata;
     ToxPk recipient;
+    QString recipientName;
 };
 
 
