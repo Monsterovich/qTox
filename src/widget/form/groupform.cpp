@@ -127,6 +127,7 @@ GroupForm::GroupForm(Core& core_, Group* chatGroup, IChatLog& chatLog_,
     contentLayout->insertWidget(contentLayout->count() - 1, privateMessageBar);
 
     connect(privateMessageCloseButton, &QToolButton::clicked, this, &GroupForm::cancelPrivateMessage);
+    connect(msgEdit, &ChatTextEdit::escapePressed, this, &GroupForm::cancelPrivateMessage);
 
     connect(headWidget, &ChatFormHeader::nameChanged, chatGroup, &Group::setName);
     connect(group, &Group::titleChanged, this, &GroupForm::onTitleChanged);
