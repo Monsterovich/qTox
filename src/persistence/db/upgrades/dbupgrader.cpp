@@ -302,6 +302,7 @@ bool DbUpgrader::createCurrentSchema(RawDatabase& db)
         // leave this as NOT NULL for now.
         "message BLOB NOT NULL, "
         "recipient BLOB, "
+        "recipient_name BLOB, "
         "FOREIGN KEY (id, message_type) REFERENCES history(id, message_type), "
         "FOREIGN KEY (sender_alias) REFERENCES aliases(id)); "
         "CREATE TABLE file_transfers "
@@ -630,6 +631,9 @@ bool DbUpgrader::dbSchema11to12(RawDatabase& db)
     upgradeQueries.emplace_back(QStringLiteral( //
         "ALTER TABLE text_messages "
         "ADD COLUMN recipient BLOB;"));
+    upgradeQueries.emplace_back(QStringLiteral( //
+        "ALTER TABLE text_messages "
+        "ADD COLUMN recipient_name BLOB;"));
     upgradeQueries.emplace_back(QStringLiteral("PRAGMA user_version = 12;"));
     return db.execNow(std::move(upgradeQueries));
 }

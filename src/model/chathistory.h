@@ -62,7 +62,6 @@ private:
     History* history;
     const Settings& settings;
     const ICoreIdHandler& coreIdHandler;
-    GroupList& groupList;
     mutable SessionChatLog sessionChatLog;
 
     // If a message completes before it's inserted into history it will end up

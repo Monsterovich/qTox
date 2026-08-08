@@ -203,9 +203,9 @@ const std::vector<DbUtility::SqliteMasterEntry> DbUtility::schema12{
      "CHECK (message_type in ('T','F','S')), timestamp INTEGER NOT NULL, chat_id INTEGER NOT NULL, "
      "UNIQUE (id, message_type), FOREIGN KEY (chat_id) REFERENCES chats(id))"},
     {"text_messages", "CREATE TABLE text_messages (id INTEGER PRIMARY KEY, message_type CHAR(1) "
-                      "NOT NULL CHECK (message_type = 'T'), sender_alias INTEGER NOT NULL, message "
-                      "BLOB NOT NULL, recipient BLOB, FOREIGN KEY (id, message_type) REFERENCES history(id, "
-                      "message_type), FOREIGN KEY (sender_alias) REFERENCES aliases(id))"},
+                       "NOT NULL CHECK (message_type = 'T'), sender_alias INTEGER NOT NULL, message "
+                       "BLOB NOT NULL, recipient BLOB, recipient_name BLOB, FOREIGN KEY (id, message_type) REFERENCES history(id, "
+                       "message_type), FOREIGN KEY (sender_alias) REFERENCES aliases(id))"},
     {"chats", "CREATE TABLE chats (id INTEGER PRIMARY KEY, uuid BLOB NOT NULL UNIQUE)"},
     {"authors", "CREATE TABLE authors (id INTEGER PRIMARY KEY, public_key BLOB NOT NULL UNIQUE)"},
     {"broken_messages", "CREATE TABLE broken_messages (id INTEGER PRIMARY KEY, reason INTEGER NOT "

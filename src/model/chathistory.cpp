@@ -7,9 +7,7 @@
 
 #include "src/core/chatid.h"
 #include "src/core/icoreidhandler.h"
-#include "src/grouplist.h"
 #include "src/model/chat.h"
-#include "src/model/group.h"
 #include "src/persistence/settings.h"
 #include "src/widget/form/chatform.h"
 
@@ -64,13 +62,12 @@ bool handleActionPrefix(QString& content)
 
 ChatHistory::ChatHistory(Chat& chat_, History* history_, const ICoreIdHandler& coreIdHandler_,
                          const Settings& settings_, IMessageDispatcher& messageDispatcher,
-                         FriendList& friendList, ConferenceList& conferenceList, GroupList& groupList_)
+                         FriendList& friendList, ConferenceList& conferenceList, GroupList& groupList)
     : chat(chat_)
     , history(history_)
     , settings(settings_)
     , coreIdHandler(coreIdHandler_)
-    , groupList(groupList_)
-    , sessionChatLog(getInitialChatLogIdx(), coreIdHandler_, friendList, conferenceList, groupList_)
+    , sessionChatLog(getInitialChatLogIdx(), coreIdHandler_, friendList, conferenceList, groupList)
 {
     connect(&messageDispatcher, &IMessageDispatcher::messageComplete, this,
             &ChatHistory::onMessageComplete);
@@ -266,7 +263,7 @@ void ChatHistory::onMessageReceived(const ToxPk& sender, const Message& message)
         }
 
         history->addNewMessage(chatId, content, sender, message.timestamp, true, displayName, {},
-                               message.recipient);
+                               message.recipient, message.recipientName);
     }
 
     sessionChatLog.onMessageReceived(sender, message);
@@ -288,7 +285,7 @@ void ChatHistory::onMessageSent(DispatchedMessageId id, const Message& message)
         auto onInsertion = [this, id](RowId historyId) { handleDispatchedMessage(id, historyId); };
 
         history->addNewMessage(chatId, content, selfPk, message.timestamp, false, username,
-                               onInsertion, message.recipient);
+                               onInsertion, message.recipient, message.recipientName);
     }
 
     sessionChatLog.onMessageSent(id, message);
@@ -374,16 +371,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
             // we hit IMessageDispatcher's signals which history listens for.
             // Items added to history have already been sent so we know they already
             // reflect what was sent/received.
-            QString recipientName;
-            if (!message.recipient.isEmpty()) {
-                for (Group* group : groupList.getAllGroups()) {
-                    if (group->getPersistentId() == chat.getPersistentId()) {
-                        recipientName = group->getDisplayedName(message.recipient);
-                        break;
-                    }
-                }
-            }
-            auto processedMessage = Message{isAction, messageContent, message.timestamp, {}, message.recipient, recipientName};
+            auto processedMessage = Message{isAction, messageContent, message.timestamp, {}, message.recipient, message.recipientName};
 
             auto dispatchedMessageIt =
                 std::find_if(dispatchedMessageRowIdMap.begin(), dispatchedMessageRowIdMap.end(),

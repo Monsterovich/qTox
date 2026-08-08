@@ -103,7 +103,8 @@ RawDatabase::Query generateHistoryTableInsertion(char type, const QDateTime& tim
 std::vector<RawDatabase::Query>
 generateNewTextMessageQueries(const ChatId& chatId, const QString& message, const ToxPk& sender,
                               const QDateTime& time, bool isDelivered, QString dispName,
-                              std::function<void(RowId)> insertIdCallback, const ToxPk& recipient)
+                              std::function<void(RowId)> insertIdCallback, const ToxPk& recipient,
+                              const QString& recipientName)
 {
     std::vector<RawDatabase::Query> queries;
 
@@ -114,7 +115,7 @@ generateNewTextMessageQueries(const ChatId& chatId, const QString& message, cons
 
     QVector<QByteArray> boundParams;
     QString queryString = QStringLiteral( //
-        "INSERT INTO text_messages (id, message_type, sender_alias, message, recipient) "
+        "INSERT INTO text_messages (id, message_type, sender_alias, message, recipient, recipient_name) "
         "VALUES ( "
         "    last_insert_rowid(), "
         "    'T', "
@@ -127,6 +128,12 @@ generateNewTextMessageQueries(const ChatId& chatId, const QString& message, cons
     if (!recipient.isEmpty()) {
         queryString += ", ?";
         boundParams += recipient.getByteArray();
+    } else {
+        queryString += ", NULL";
+    }
+    if (!recipientName.isEmpty()) {
+        queryString += ", ?";
+        boundParams += recipientName.toUtf8();
     } else {
         queryString += ", NULL";
     }
@@ -505,14 +512,14 @@ void History::addNewSystemMessage(const ChatId& chatId, const SystemMessage& sys
 void History::addNewMessage(const ChatId& chatId, const QString& message, const ToxPk& sender,
                             const QDateTime& time, bool isDelivered, QString dispName,
                             const std::function<void(RowId)>& insertIdCallback,
-                            const ToxPk& recipient)
+                            const ToxPk& recipient, const QString& recipientName)
 {
     if (historyAccessBlocked()) {
         return;
     }
 
     db->execLater(generateNewTextMessageQueries(chatId, message, sender, time, isDelivered,
-                                                dispName, insertIdCallback, recipient));
+                                                dispName, insertIdCallback, recipient, recipientName));
 }
 
 void History::setFileFinished(const QByteArray& fileId, bool success, const QString& filePath,
@@ -588,6 +595,7 @@ QList<History::HistMessage> History::getMessagesForChat(const ChatId& chatId, si
         constexpr auto senderOffset = 12;
         constexpr auto systemOffset = 14;
         constexpr auto recipientOffset = 19;
+        constexpr auto recipientNameOffset = 20;
 
         auto it = row.begin();
 
@@ -611,8 +619,10 @@ QList<History::HistMessage> History::getMessagesForChat(const ChatId& chatId, si
             const auto senderName = QString::fromUtf8((*it++).toByteArray().replace('\0', ""));
             it = std::next(row.begin(), recipientOffset);
             const auto recipientKey = it->isNull() ? ToxPk{} : ToxPk{it->toByteArray()};
+            it = std::next(row.begin(), recipientNameOffset);
+            const auto recipientName = QString::fromUtf8(it->toByteArray().replace('\0', ""));
             messages += HistMessage(id, messageState, timestamp, chatId.clone(), senderName,
-                                    senderKey, messageContent, recipientKey);
+                                    senderKey, messageContent, recipientKey, recipientName);
             break;
         }
         case 'F': {
@@ -679,7 +689,8 @@ QList<History::HistMessage> History::getMessagesForChat(const ChatId& chatId, si
         "    system_messages.arg2,\n"
         "    system_messages.arg3,\n"
         "    system_messages.arg4,\n"
-        "    text_messages.recipient\n"
+        "    text_messages.recipient,\n"
+        "    text_messages.recipient_name\n"
         "FROM history "
         "LEFT JOIN text_messages ON history.id = text_messages.id "
         "LEFT JOIN file_transfers ON history.id = file_transfers.id "
@@ -717,11 +728,13 @@ QList<History::HistMessage> History::getUndeliveredMessagesForChat(const ChatId&
         auto senderKey = ToxPk{(*it++).toByteArray()};
         auto displayName = QString::fromUtf8((*it++).toByteArray().replace('\0', ""));
         const auto recipientKey = it->isNull() ? ToxPk{} : ToxPk{it->toByteArray()};
+        ++it;
+        const auto recipientName = QString::fromUtf8(it->toByteArray().replace('\0', ""));
 
         const MessageState messageState = getMessageState(isPending, isBroken);
 
         ret +=
-            {id, messageState, timestamp, chatId.clone(), displayName, senderKey, messageContent, recipientKey};
+            {id, messageState, timestamp, chatId.clone(), displayName, senderKey, messageContent, recipientKey, recipientName};
     };
 
     QString queryString = QStringLiteral( //
@@ -733,7 +746,8 @@ QList<History::HistMessage> History::getUndeliveredMessagesForChat(const ChatId&
         "    text_messages.message,\n"
         "    authors.public_key as sender_key,\n"
         "    aliases.display_name,\n"
-        "    text_messages.recipient\n"
+        "    text_messages.recipient,\n"
+        "    text_messages.recipient_name\n"
         "FROM history "
         "JOIN text_messages ON history.id = text_messages.id "
         "JOIN aliases ON text_messages.sender_alias = aliases.id "

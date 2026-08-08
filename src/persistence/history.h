@@ -131,7 +131,7 @@ public:
     {
         HistMessage(RowId id_, MessageState state_, QDateTime timestamp_,
                     std::unique_ptr<ChatId> chat_, QString dispName_, ToxPk sender_, QString message,
-                    ToxPk recipient_ = {})
+                    ToxPk recipient_ = {}, QString recipientName_ = {})
             : chat{std::move(chat_)}
             , sender{std::move(sender_)}
             , dispName{std::move(dispName_)}
@@ -140,6 +140,7 @@ public:
             , state{state_}
             , content(std::move(message))
             , recipient{std::move(recipient_)}
+            , recipientName{std::move(recipientName_)}
         {
         }
 
@@ -174,6 +175,7 @@ public:
             , state{other.state}
             , content{other.content}
             , recipient{other.recipient}
+            , recipientName{other.recipientName}
         {
         }
 
@@ -187,6 +189,7 @@ public:
             state = other.state;
             content = other.content;
             recipient = other.recipient;
+            recipientName = other.recipientName;
             return *this;
         }
 
@@ -198,6 +201,7 @@ public:
         MessageState state;
         HistMessageContent content;
         ToxPk recipient;
+        QString recipientName;
     };
 
     struct DateIdx
@@ -219,7 +223,7 @@ public:
     void addNewMessage(const ChatId& chatId, const QString& message, const ToxPk& sender,
                        const QDateTime& time, bool isDelivered, QString dispName,
                        const std::function<void(RowId)>& insertIdCallback = {},
-                       const ToxPk& recipient = {});
+                       const ToxPk& recipient = {}, const QString& recipientName = {});
 
     void addNewFileMessage(const ChatId& chatId, const QByteArray& fileId, const QString& fileName,
                            const QString& filePath, int64_t size, const ToxPk& sender,
