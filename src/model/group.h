@@ -83,6 +83,7 @@ public:
     bool setPeerRole(const ToxPk& pk, GroupRole role);
     bool kickPeer(const ToxPk& pk);
     ToxPk resolvePeerPk(uint32_t peerId) const;
+    uint32_t getPeerId(const ToxPk& pk) const;
 
 signals:
     void titleChanged(const QString& author, const QString& title);

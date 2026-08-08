@@ -44,6 +44,27 @@ GroupMessageDispatcher::sendMessage(bool isAction, const QString& content)
     return std::make_pair(firstMessageId, lastMessageId);
 }
 
+std::pair<DispatchedMessageId, DispatchedMessageId>
+GroupMessageDispatcher::sendPrivateMessage(uint32_t peerId, bool isAction, const QString& content)
+{
+    const auto firstMessageId = nextMessageId;
+    auto lastMessageId = firstMessageId;
+    const ToxPk recipientPk = group.resolvePeerPk(peerId);
+
+    for (const auto& message : processor.processOutgoingMessage(isAction, content)) {
+        auto messageId = nextMessageId++;
+        lastMessageId = messageId;
+        messageSender.sendGroupPrivateMessage(group.getId(), peerId, message.content);
+
+        Message messageWithRecipient = message;
+        messageWithRecipient.recipient = recipientPk;
+        emit messageSent(messageId, messageWithRecipient);
+        emit messageComplete(messageId);
+    }
+
+    return std::make_pair(firstMessageId, lastMessageId);
+}
+
 /**
  * @brief Processes and dispatches received message from toxcore
  * @param[in] sender
@@ -65,4 +86,23 @@ void GroupMessageDispatcher::onMessageReceived(const ToxPk& sender, bool isActio
     }
 
     emit messageReceived(sender, processor.processIncomingCoreMessage(isAction, content));
+}
+
+void GroupMessageDispatcher::onPrivateMessageReceived(const ToxPk& sender, bool isAction,
+                                                       const QString& content)
+{
+    const bool isSelf = sender == idHandler.getSelfPublicKey();
+
+    if (isSelf) {
+        return;
+    }
+
+    if (settings.getBlockList().contains(sender.toString())) {
+        qDebug() << "onGroupPrivateMessageReceived: Filtered:" << sender.toString();
+        return;
+    }
+
+    Message message = processor.processIncomingCoreMessage(isAction, content);
+    message.recipient = idHandler.getSelfPublicKey();
+    emit messageReceived(sender, message);
 }

@@ -101,6 +101,8 @@ private slots:
 
     void onGroupMessageReceived(uint32_t groupNumber, uint32_t peerId, const QString& message,
                                 bool isAction);
+    void onGroupPrivateMessageReceived(uint32_t groupNumber, uint32_t peerId, const QString& message,
+                                        bool isAction);
     void onEmptyGroupCreated(uint32_t groupNumber, const GroupId& groupId, const QString& groupName);
     void onGroupJoined(uint32_t groupNumber, const GroupId& groupId);
     void onGroupPeerJoined(uint32_t groupNumber, uint32_t peerId);

@@ -59,6 +59,7 @@ void ChatManager::connectToCore(Core& core_)
     connect(core, &Core::conferencePeerNameChanged, this, &ChatManager::onConferencePeerNameChanged);
     connect(core, &Core::conferenceTitleChanged, this, &ChatManager::onConferenceTitleChanged);
     connect(core, &Core::groupMessageReceived, this, &ChatManager::onGroupMessageReceived);
+    connect(core, &Core::groupPrivateMessageReceived, this, &ChatManager::onGroupPrivateMessageReceived);
     connect(core, &Core::emptyGroupCreated, this, &ChatManager::onEmptyGroupCreated);
     connect(core, &Core::groupJoined, this, &ChatManager::onGroupJoined);
     connect(core, &Core::groupPeerJoined, this, &ChatManager::onGroupPeerJoined);
@@ -388,6 +389,20 @@ void ChatManager::onGroupMessageReceived(uint32_t groupNumber, uint32_t peerId, 
     const ToxPk author = core->getGroupPeerPk(groupNumber, peerId);
 
     groupMessageDispatchers[groupId]->onMessageReceived(author, isAction, message);
+}
+
+void ChatManager::onGroupPrivateMessageReceived(uint32_t groupNumber, uint32_t peerId,
+                                                 const QString& message, bool isAction)
+{
+    const GroupId& groupId = groupList.id2Key(groupNumber);
+    Group* g = groupList.findGroup(groupId);
+    if (g == nullptr) {
+        return;
+    }
+
+    const ToxPk author = core->getGroupPeerPk(groupNumber, peerId);
+
+    groupMessageDispatchers[groupId]->onPrivateMessageReceived(author, isAction, message);
 }
 
 void ChatManager::onEmptyGroupCreated(uint32_t groupNumber, const GroupId& groupId,

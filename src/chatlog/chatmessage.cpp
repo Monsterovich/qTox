@@ -43,7 +43,7 @@ ChatMessage::Ptr ChatMessage::createChatMessage(const QString& sender, const QSt
                                                 MessageType type, bool isMe, MessageState state,
                                                 const QDateTime& date, DocumentCache& documentCache,
                                                 SmileyPack& smileyPack, Settings& settings,
-                                                Style& style, bool colorizeName)
+                                                Style& style, bool colorizeName, bool isPrivate)
 {
     ChatMessage::Ptr msg = std::make_shared<ChatMessage>(documentCache, settings, style);
 
@@ -69,6 +69,13 @@ ChatMessage::Ptr ChatMessage::createChatMessage(const QString& sender, const QSt
     const Settings::StyleType styleType = settings.getStylePreference();
     if (styleType != Settings::StyleType::NONE) {
         text = TextFormatter::applyMarkdown(text, styleType == Settings::StyleType::WITH_CHARS);
+    }
+
+    if (isPrivate) {
+        const QString badge = QStringLiteral(
+            "<span class=\"private-badge\">%1</span>&nbsp;")
+            .arg(QObject::tr("private", "Label for private group messages"));
+        text = badge + text;
     }
 
 

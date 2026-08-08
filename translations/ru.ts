@@ -1609,6 +1609,14 @@ instead of closing entirely.</source>
         <source>Nickname:</source>
         <translation>Никнейм:</translation>
     </message>
+    <message>
+        <source>private message</source>
+        <translation>личное сообщение</translation>
+    </message>
+    <message>
+        <source>Private message to: %1</source>
+        <translation>Личное сообщение для: %1</translation>
+    </message>
 </context>
 <context>
     <name>IdentitySettings</name>
@@ -2572,6 +2580,11 @@ This ID includes the NoSpam code (in blue), and the checksum (in gray).</source>
 </context>
 <context>
     <name>QObject</name>
+    <message>
+        <source>private</source>
+        <comment>Label for private group messages</comment>
+        <translation>приват</translation>
+    </message>
     <message>
         <source>Default</source>
         <translation>По умолчанию</translation>

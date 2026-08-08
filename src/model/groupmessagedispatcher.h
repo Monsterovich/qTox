@@ -23,9 +23,14 @@ public:
                            ICoreGroupMessageSender& messageSender, Settings& settings);
 
     std::pair<DispatchedMessageId, DispatchedMessageId> sendMessage(bool isAction,
-                                                                    const QString& content) override;
+                                                                     const QString& content) override;
+
+    std::pair<DispatchedMessageId, DispatchedMessageId> sendPrivateMessage(uint32_t peerId,
+                                                                           bool isAction,
+                                                                           const QString& content);
 
     void onMessageReceived(const ToxPk& sender, bool isAction, const QString& content);
+    void onPrivateMessageReceived(const ToxPk& sender, bool isAction, const QString& content);
 
 private:
     Group& group;

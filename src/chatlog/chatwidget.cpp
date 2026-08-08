@@ -57,10 +57,11 @@ ChatMessage::Ptr createMessage(const QString& displayName, bool isSelf, bool col
         messageType = ChatMessage::MessageType::ALERT;
     }
 
+    const bool isPrivate = !chatLogMessage.message.recipient.isEmpty();
     const auto timestamp = chatLogMessage.message.timestamp;
     return ChatMessage::createChatMessage(displayName, chatLogMessage.message.content, messageType,
                                           isSelf, chatLogMessage.state, timestamp, documentCache,
-                                          smileyPack, settings, style, colorizeNames);
+                                          smileyPack, settings, style, colorizeNames, isPrivate);
 }
 
 void renderMessageRaw(const QString& displayName, bool isSelf, bool colorizeNames,

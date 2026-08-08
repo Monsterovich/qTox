@@ -262,7 +262,8 @@ void ChatHistory::onMessageReceived(const ToxPk& sender, const Message& message)
             content = ChatForm::ACTION_PREFIX + content;
         }
 
-        history->addNewMessage(chatId, content, sender, message.timestamp, true, displayName);
+        history->addNewMessage(chatId, content, sender, message.timestamp, true, displayName, {},
+                               message.recipient);
     }
 
     sessionChatLog.onMessageReceived(sender, message);
@@ -284,7 +285,7 @@ void ChatHistory::onMessageSent(DispatchedMessageId id, const Message& message)
         auto onInsertion = [this, id](RowId historyId) { handleDispatchedMessage(id, historyId); };
 
         history->addNewMessage(chatId, content, selfPk, message.timestamp, false, username,
-                               onInsertion);
+                               onInsertion, message.recipient);
     }
 
     sessionChatLog.onMessageSent(id, message);
@@ -370,7 +371,7 @@ void ChatHistory::loadHistoryIntoSessionChatLog(ChatLogIdx start) const
             // we hit IMessageDispatcher's signals which history listens for.
             // Items added to history have already been sent so we know they already
             // reflect what was sent/received.
-            auto processedMessage = Message{isAction, messageContent, message.timestamp, {}};
+            auto processedMessage = Message{isAction, messageContent, message.timestamp, {}, message.recipient};
 
             auto dispatchedMessageIt =
                 std::find_if(dispatchedMessageRowIdMap.begin(), dispatchedMessageRowIdMap.end(),

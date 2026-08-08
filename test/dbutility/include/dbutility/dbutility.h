@@ -33,6 +33,7 @@ extern const std::vector<SqliteMasterEntry> schema7;
 extern const std::vector<SqliteMasterEntry> schema9;
 extern const std::vector<SqliteMasterEntry> schema10;
 extern const std::vector<SqliteMasterEntry> schema11;
+extern const std::vector<SqliteMasterEntry> schema12;
 
 void createSchemaAtVersion(std::shared_ptr<RawDatabase> db,
                            std::vector<DbUtility::SqliteMasterEntry> schema);

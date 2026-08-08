@@ -106,6 +106,7 @@ void Core::registerCallbacks(Tox* tox)
 
     tox_callback_group_invite(tox, onGroupInvite);
     tox_callback_group_message(tox, onGroupMessage);
+    tox_callback_group_private_message(tox, onGroupPrivateMessage);
     tox_callback_group_peer_join(tox, onGroupPeerJoin);
     tox_callback_group_peer_exit(tox, onGroupPeerExit);
     tox_callback_group_peer_name(tox, onGroupPeerNameChange);
@@ -576,6 +577,18 @@ void Core::onGroupMessage(Tox* tox, uint32_t groupNumber, uint32_t peerId, Tox_M
     const bool isAction = type == TOX_MESSAGE_TYPE_ACTION;
     const QString message = ToxString(cMessage, length).getQString();
     emit core->groupMessageReceived(groupNumber, peerId, message, isAction);
+}
+
+void Core::onGroupPrivateMessage(Tox* tox, uint32_t groupNumber, uint32_t peerId, Tox_Message_Type type,
+                                  const uint8_t* cMessage, size_t length, Tox_Group_Message_Id messageId,
+                                  void* vCore)
+{
+    std::ignore = tox;
+    std::ignore = messageId;
+    Core* core = static_cast<Core*>(vCore);
+    const bool isAction = type == TOX_MESSAGE_TYPE_ACTION;
+    const QString message = ToxString(cMessage, length).getQString();
+    emit core->groupPrivateMessageReceived(groupNumber, peerId, message, isAction);
 }
 
 void Core::onGroupPeerJoin(Tox* tox, uint32_t groupNumber, uint32_t peerId, void* vCore)

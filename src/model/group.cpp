@@ -441,3 +441,13 @@ ToxPk Group::resolvePeerPk(uint32_t peerId) const
 {
     return peerIdToPk.value(peerId, ToxPk{});
 }
+
+uint32_t Group::getPeerId(const ToxPk& pk) const
+{
+    for (auto it = peerIdToPk.cbegin(); it != peerIdToPk.cend(); ++it) {
+        if (it.value() == pk) {
+            return it.key();
+        }
+    }
+    return std::numeric_limits<uint32_t>::max();
+}

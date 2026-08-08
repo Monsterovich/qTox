@@ -9,6 +9,7 @@
 #include "src/friendlist.h"
 #include "src/model/friend.h"
 #include "src/model/group.h"
+#include "src/model/groupmessagedispatcher.h"
 #include "src/persistence/settings.h"
 #include "src/widget/chatformheader.h"
 #include "src/widget/flowlayout.h"
@@ -21,14 +22,18 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QDragEnterEvent>
+#include <QHBoxLayout>
 #include <QIcon>
 #include <QInputDialog>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
 #include <QMimeData>
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QTextDocument>
+#include <QToolButton>
+#include <QVBoxLayout>
 
 namespace {
 const auto LABEL_PEER_TYPE_OUR = QVariant(QStringLiteral("our"));
@@ -66,6 +71,7 @@ GroupForm::GroupForm(Core& core_, Group* chatGroup, IChatLog& chatLog_,
                       conferenceList_, groupList_)
     , core{core_}
     , group(chatGroup)
+    , groupDispatcher(dynamic_cast<GroupMessageDispatcher*>(&messageDispatcher_))
     , settings(settings_)
     , style{style_}
     , friendList{friendList_}
@@ -99,6 +105,28 @@ GroupForm::GroupForm(Core& core_, Group* chatGroup, IChatLog& chatLog_,
     headWidget->addStretch();
 
     nusersLabel->setMinimumHeight(12);
+
+    privateMessageBar = new QWidget(this);
+    privateMessageBar->setObjectName("privateMessageBar");
+    auto* privateMessageLayout = new QHBoxLayout(privateMessageBar);
+    privateMessageLayout->setContentsMargins(8, 4, 8, 4);
+    privateMessageLayout->setSpacing(8);
+
+    privateMessageLabel = new QLabel(privateMessageBar);
+    privateMessageLabel->setObjectName("privateMessageLabel");
+    privateMessageLayout->addWidget(privateMessageLabel);
+    privateMessageLayout->addStretch();
+
+    privateMessageCloseButton = new QToolButton(privateMessageBar);
+    privateMessageCloseButton->setObjectName("privateMessageCloseButton");
+    privateMessageCloseButton->setAutoRaise(true);
+    privateMessageCloseButton->setIcon(QIcon::fromTheme("dialog-close", QIcon(":/img/close.svg")));
+    privateMessageLayout->addWidget(privateMessageCloseButton);
+
+    privateMessageBar->hide();
+    contentLayout->insertWidget(contentLayout->count() - 1, privateMessageBar);
+
+    connect(privateMessageCloseButton, &QToolButton::clicked, this, &GroupForm::cancelPrivateMessage);
 
     connect(headWidget, &ChatFormHeader::nameChanged, chatGroup, &Group::setName);
     connect(group, &Group::titleChanged, this, &GroupForm::onTitleChanged);
@@ -355,6 +383,7 @@ void GroupForm::updateUserCount(int numPeers)
 void GroupForm::retranslateUi()
 {
     updateUserCount(group->getPeersCount());
+    updatePrivateMessageIndicator();
 }
 
 void GroupForm::onLabelContextMenuRequested(const QPoint& localPos)
@@ -420,6 +449,8 @@ void GroupForm::onLabelContextMenuRequested(const QPoint& localPos)
         }
         kickAction = contextMenu->addAction(tr("kick from group"));
     }
+
+    auto* privateMessageAction = contextMenu->addAction(tr("private message"));
     contextMenu->addSeparator();
 
     const QAction* selectedItem = contextMenu->exec(pos);
@@ -447,6 +478,8 @@ void GroupForm::onLabelContextMenuRequested(const QPoint& localPos)
         group->setPeerRole(peerPk, GroupRole::User);
     } else if (selectedItem == kickAction) {
         group->kickPeer(peerPk);
+    } else if (selectedItem == privateMessageAction) {
+        startPrivateMessage(peerPk);
     }
 }
 
@@ -638,4 +671,54 @@ bool GroupForm::canSetTopic() const
     }
 
     return selfRole == GroupRole::Founder || selfRole == GroupRole::Moderator;
+}
+
+void GroupForm::startPrivateMessage(const ToxPk& peerPk)
+{
+    privateMessageTarget = peerPk;
+    updatePrivateMessageIndicator();
+    privateMessageBar->show();
+    msgEdit->setFocus();
+}
+
+void GroupForm::cancelPrivateMessage()
+{
+    privateMessageTarget = ToxPk{};
+    privateMessageBar->hide();
+}
+
+void GroupForm::updatePrivateMessageIndicator()
+{
+    if (privateMessageTarget.isEmpty()) {
+        privateMessageLabel->clear();
+    } else {
+        const QString peerName = group->getDisplayedName(privateMessageTarget);
+        privateMessageLabel->setText(tr("Private message to: %1").arg(peerName));
+    }
+}
+
+void GroupForm::onSendTriggered()
+{
+    auto msg = msgEdit->toPlainText();
+
+    const bool isAction = msg.startsWith(ChatForm::ACTION_PREFIX, Qt::CaseInsensitive);
+    if (isAction) {
+        msg.remove(0, ChatForm::ACTION_PREFIX.length());
+    }
+
+    if (msg.isEmpty()) {
+        return;
+    }
+
+    msgEdit->setLastMessage(msg);
+    msgEdit->clear();
+
+    if (!privateMessageTarget.isEmpty() && groupDispatcher != nullptr) {
+        const uint32_t peerId = group->getPeerId(privateMessageTarget);
+        if (peerId != std::numeric_limits<uint32_t>::max()) {
+            groupDispatcher->sendPrivateMessage(peerId, isAction, msg);
+        }
+    } else {
+        messageDispatcher.sendMessage(isAction, msg);
+    }
 }

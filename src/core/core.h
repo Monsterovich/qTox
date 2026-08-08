@@ -228,6 +228,8 @@ signals:
     void groupInviteReceived(const GroupInvite& inviteInfo);
     void groupMessageReceived(uint32_t groupNumber, uint32_t peerId, const QString& message,
                               bool isAction);
+    void groupPrivateMessageReceived(uint32_t groupNumber, uint32_t peerId, const QString& message,
+                                      bool isAction);
     void groupPeerJoined(uint32_t groupNumber, uint32_t peerId);
     void groupPeerExited(uint32_t groupNumber, uint32_t peerId);
     void groupPeerNameChanged(uint32_t groupNumber, uint32_t peerId, const QString& newName);
@@ -284,6 +286,9 @@ private:
     static void onGroupMessage(Tox* tox, uint32_t groupNumber, uint32_t peerId,
                                Tox_Message_Type type, const uint8_t* cMessage, size_t length,
                                Tox_Group_Message_Id messageId, void* vCore);
+    static void onGroupPrivateMessage(Tox* tox, uint32_t groupNumber, uint32_t peerId,
+                                       Tox_Message_Type type, const uint8_t* cMessage, size_t length,
+                                       Tox_Group_Message_Id messageId, void* vCore);
     static void onGroupPeerJoin(Tox* tox, uint32_t groupNumber, uint32_t peerId, void* vCore);
     static void onGroupPeerExit(Tox* tox, uint32_t groupNumber, uint32_t peerId,
                                 Tox_Group_Exit_Type exitType, const uint8_t* name, size_t nameLength,

@@ -18,6 +18,7 @@ class Group;
 class FlowLayout;
 class QTimer;
 class IMessageDispatcher;
+class GroupMessageDispatcher;
 struct Message;
 class Settings;
 class DocumentCache;
@@ -28,6 +29,9 @@ class FriendList;
 class ConferenceList;
 class GroupList;
 class CroppingLabel;
+class QLabel;
+class QToolButton;
+class QWidget;
 
 class GroupForm : public GenericChatForm
 {
@@ -45,6 +49,7 @@ signals:
 private slots:
     void onScreenshotClicked() override;
     void onAttachClicked() override;
+    void onSendTriggered() override;
     void onUserJoined(const ToxPk& user, const QString& name);
     void onUserLeft(const ToxPk& user, const QString& name);
     void onPeerNameChanged(const ToxPk& peer, const QString& oldName, const QString& newName);
@@ -58,6 +63,8 @@ private slots:
     void setNickname();
     void clearPassword();
     void setPeerLimit();
+    void startPrivateMessage(const ToxPk& peerPk);
+    void cancelPrivateMessage();
 
 protected:
     void keyPressEvent(QKeyEvent* ev) final;
@@ -73,10 +80,12 @@ private:
     void updateTopicLabel();
     static QString roleIcon(GroupRole role);
     bool canSetTopic() const;
+    void updatePrivateMessageIndicator();
 
 private:
     Core& core;
     Group* group;
+    GroupMessageDispatcher* groupDispatcher;
     QMap<ToxPk, QLabel*> peerLabels;
     FlowLayout* namesListLayout;
     QLabel* nusersLabel;
@@ -84,4 +93,8 @@ private:
     Settings& settings;
     Style& style;
     FriendList& friendList;
+    ToxPk privateMessageTarget;
+    QWidget* privateMessageBar;
+    QLabel* privateMessageLabel;
+    QToolButton* privateMessageCloseButton;
 };
