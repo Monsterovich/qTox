@@ -155,7 +155,7 @@ void TestDbSchema::testCreation()
     const QVector<RawDatabase::Query> queries;
     auto db = RawDatabase::open(testDatabaseFile->fileName(), {}, {});
     QVERIFY(DbUpgrader::createCurrentSchema(*db));
-    DbUtility::verifyDb(db, DbUtility::schema12);
+    DbUtility::verifyDb(db, DbUtility::schema11);
 }
 
 void TestDbSchema::testIsNewDb()
