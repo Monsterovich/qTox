@@ -384,7 +384,9 @@ void ChatManager::onGroupMessageReceived(uint32_t groupNumber, uint32_t peerId, 
 {
     const GroupId& groupId = groupList.id2Key(groupNumber);
     Group* g = groupList.findGroup(groupId);
-    assert(g);
+    if (g == nullptr) {
+        return;
+    }
 
     const ToxPk author = core->getGroupPeerPk(groupNumber, peerId);
 
