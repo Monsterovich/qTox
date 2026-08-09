@@ -55,7 +55,8 @@ GroupMessageDispatcher::sendPrivateMessage(uint32_t peerId, bool isAction, const
     for (const auto& message : processor.processOutgoingMessage(isAction, content)) {
         auto messageId = nextMessageId++;
         lastMessageId = messageId;
-        messageSender.sendGroupPrivateMessage(group.getId(), peerId, message.content);
+        const Tox_Message_Type type = isAction ? TOX_MESSAGE_TYPE_ACTION : TOX_MESSAGE_TYPE_NORMAL;
+        messageSender.sendGroupPrivateMessage(group.getId(), peerId, message.content, type);
 
         Message messageWithRecipient = message;
         messageWithRecipient.recipient = recipientPk;

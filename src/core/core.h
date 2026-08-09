@@ -164,7 +164,7 @@ public slots:
     void sendGroupMessage(uint32_t groupNumber, const QString& message) override;
     void sendGroupAction(uint32_t groupNumber, const QString& message) override;
     void sendGroupPrivateMessage(uint32_t groupNumber, uint32_t peerId,
-                                 const QString& message) override;
+                                 const QString& message, Tox_Message_Type type) override;
 
     void setNospam(uint32_t nospam);
 

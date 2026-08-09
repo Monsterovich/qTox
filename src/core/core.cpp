@@ -945,7 +945,8 @@ void Core::sendGroupAction(uint32_t groupNumber, const QString& message)
     sendGroupMessageWithType(groupNumber, message, TOX_MESSAGE_TYPE_ACTION);
 }
 
-void Core::sendGroupPrivateMessage(uint32_t groupNumber, uint32_t peerId, const QString& message)
+void Core::sendGroupPrivateMessage(uint32_t groupNumber, uint32_t peerId, const QString& message,
+                                   Tox_Message_Type type)
 {
     const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
 
@@ -959,7 +960,7 @@ void Core::sendGroupPrivateMessage(uint32_t groupNumber, uint32_t peerId, const 
 
     const ToxString cMsg(message);
     Tox_Err_Group_Send_Private_Message error;
-    tox_group_send_private_message(tox.get(), groupNumber, peerId, TOX_MESSAGE_TYPE_NORMAL,
+    tox_group_send_private_message(tox.get(), groupNumber, peerId, type,
                                    cMsg.data(), cMsg.size(), &error);
     if (!PARSE_ERR(error)) {
         emit groupSentFailed(groupNumber);
