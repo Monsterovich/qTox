@@ -455,7 +455,9 @@ void GroupForm::onLabelContextMenuRequested(const QPoint& localPos)
     contextMenu->addSeparator();
 
     const QAction* selectedItem = contextMenu->exec(pos);
-    if (!selectedItem) return;
+    if (!selectedItem) {
+        return;
+    }
     if (selectedItem == toggleMuteAction) {
         if (isPeerBlocked) {
             const int index = blockList.indexOf(peerPk.toString());
@@ -564,7 +566,9 @@ void GroupForm::onTopicContextMenuRequested(const QPoint& localPos)
     }
 
     const QAction* selectedItem = contextMenu->exec(pos);
-    if (!selectedItem) return;
+    if (!selectedItem) {
+        return;
+    }
     if (selectedItem == copyTopicAction) {
         auto* clipboard = QApplication::clipboard();
         clipboard->setText(group->getTopic(), QClipboard::Clipboard);
