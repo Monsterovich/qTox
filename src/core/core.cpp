@@ -1469,10 +1469,10 @@ GroupId Core::getGroupPersistentId(uint32_t groupNumber) const
 {
     const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
 
-    std::vector<uint8_t> idBuff(tox_group_chat_id_size());
+    QByteArray idBuff(tox_group_chat_id_size(), 0x00);
     Tox_Err_Group_State_Query error;
-    if (tox_group_get_chat_id(tox.get(), groupNumber, idBuff.data(), &error)) {
-        return GroupId{idBuff.data()};
+    if (tox_group_get_chat_id(tox.get(), groupNumber, reinterpret_cast<uint8_t*>(idBuff.data()), &error)) {
+        return GroupId{reinterpret_cast<uint8_t*>(idBuff.data())};
     }
     qCritical() << "Failed to get chat id of group" << groupNumber;
     return {};
@@ -1522,13 +1522,13 @@ QString Core::getGroupPeerName(int groupNumber, int peerId) const
         return QString{};
     }
 
-    std::vector<uint8_t> nameBuf(length);
-    tox_group_peer_get_name(tox.get(), groupNumber, peerId, nameBuf.data(), &error);
+    QByteArray nameBuf(length, 0x00);
+    tox_group_peer_get_name(tox.get(), groupNumber, peerId, reinterpret_cast<uint8_t*>(nameBuf.data()), &error);
     if (!PARSE_ERR(error)) {
         return QString{};
     }
 
-    return ToxString(nameBuf.data(), length).getQString();
+    return ToxString(reinterpret_cast<uint8_t*>(nameBuf.data()), length).getQString();
 }
 
 /**
@@ -1544,14 +1544,14 @@ ToxPk Core::getGroupPeerPk(int groupNumber, int peerId) const
         return getSelfPublicKey();
     }
 
-    std::vector<uint8_t> peerPk(tox_public_key_size());
+    QByteArray peerPk(tox_public_key_size(), 0x00);
     Tox_Err_Group_Peer_Query error;
-    tox_group_peer_get_public_key(tox.get(), groupNumber, peerId, peerPk.data(), &error);
+    tox_group_peer_get_public_key(tox.get(), groupNumber, peerId, reinterpret_cast<uint8_t*>(peerPk.data()), &error);
     if (!PARSE_ERR(error)) {
         return ToxPk{};
     }
 
-    return ToxPk(peerPk.data());
+    return ToxPk(reinterpret_cast<uint8_t*>(peerPk.data()));
 }
 
 /**
@@ -1771,13 +1771,13 @@ QString Core::getGroupTitle(int groupNumber) const
         return QString{};
     }
 
-    std::vector<uint8_t> nameBuf(length);
-    tox_group_get_name(tox.get(), groupNumber, nameBuf.data(), &error);
+    QByteArray nameBuf(length, 0x00);
+    tox_group_get_name(tox.get(), groupNumber, reinterpret_cast<uint8_t*>(nameBuf.data()), &error);
     if (!PARSE_ERR(error)) {
         return QString{};
     }
 
-    return ToxString(nameBuf.data(), length).getQString();
+    return ToxString(reinterpret_cast<uint8_t*>(nameBuf.data()), length).getQString();
 }
 
 /**
@@ -1793,13 +1793,13 @@ QString Core::getGroupTopic(int groupNumber) const
         return QString{};
     }
 
-    std::vector<uint8_t> topicBuf(length);
-    tox_group_get_topic(tox.get(), groupNumber, topicBuf.data(), &error);
+    QByteArray topicBuf(length, 0x00);
+    tox_group_get_topic(tox.get(), groupNumber, reinterpret_cast<uint8_t*>(topicBuf.data()), &error);
     if (!PARSE_ERR(error)) {
         return QString{};
     }
 
-    return ToxString(topicBuf.data(), length).getQString();
+    return ToxString(reinterpret_cast<uint8_t*>(topicBuf.data()), length).getQString();
 }
 
 /**
@@ -1815,13 +1815,13 @@ QString Core::getGroupSelfName(int groupNumber) const
         return QString{};
     }
 
-    std::vector<uint8_t> nameBuf(length);
-    tox_group_self_get_name(tox.get(), groupNumber, nameBuf.data(), &error);
+    QByteArray nameBuf(length, 0x00);
+    tox_group_self_get_name(tox.get(), groupNumber, reinterpret_cast<uint8_t*>(nameBuf.data()), &error);
     if (!PARSE_ERR(error)) {
         return QString{};
     }
 
-    return ToxString(nameBuf.data(), length).getQString();
+    return ToxString(reinterpret_cast<uint8_t*>(nameBuf.data()), length).getQString();
 }
 
 /**
