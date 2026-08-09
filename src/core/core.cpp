@@ -673,9 +673,8 @@ void Core::onGroupTopic(Tox* tox, uint32_t groupNumber, uint32_t peerId, const u
 void Core::onGroupJoinFail(Tox* tox, uint32_t groupNumber, Tox_Group_Join_Fail failType, void* vCore)
 {
     std::ignore = tox;
-    std::ignore = failType;
     auto* const core = static_cast<Core*>(vCore);
-    qWarning() << "Group join failed for group" << groupNumber;
+    qWarning() << "Group join failed for group" << groupNumber << "with error:" << failType;
     core->stopGroupReconnectTimer(groupNumber);
     core->groupPeerCounts.remove(groupNumber);
     const auto groupIdIt = core->numberToGroupId.find(groupNumber);
@@ -683,7 +682,7 @@ void Core::onGroupJoinFail(Tox* tox, uint32_t groupNumber, Tox_Group_Join_Fail f
         core->groupIdToNumber.remove(*groupIdIt);
         core->numberToGroupId.erase(groupIdIt);
     }
-    emit core->groupJoinFailed(groupNumber);
+    emit core->groupJoinFailed(groupNumber, failType);
 }
 
 void Core::onGroupModeration(Tox* tox, uint32_t groupNumber, uint32_t sourcePeerId,

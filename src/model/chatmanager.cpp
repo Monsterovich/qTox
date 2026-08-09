@@ -550,16 +550,20 @@ void ChatManager::onGroupSelfDisconnected(uint32_t groupNumber)
     }
 }
 
-void ChatManager::onGroupJoinFailed(uint32_t groupNumber)
+void ChatManager::onGroupJoinFailed(uint32_t groupNumber, Tox_Group_Join_Fail failType)
 {
     const GroupId& groupId = groupList.id2Key(groupNumber);
     Group* g = groupList.findGroup(groupId);
     if (g != nullptr) {
-        core->quitGroup(g->getId());
-        settings.removeSavedGroup(groupId.toString());
-        // The UI must be torn down before the model, otherwise the GroupForm
-        // keeps a dangling reference to the chat log.
-        emit groupRemoved(groupId);
+        if (failType == TOX_GROUP_JOIN_FAIL_INVALID_PASSWORD) {
+            core->quitGroup(g->getId());
+            settings.removeSavedGroup(groupId.toString());
+            // The UI must be torn down before the model, otherwise the GroupForm
+            // keeps a dangling reference to the chat log.
+            emit groupRemoved(groupId);
+        } else {
+            qWarning() << "Group" << groupId.toString() << "join failed temporarily, keeping saved";
+        }
     }
 }
 

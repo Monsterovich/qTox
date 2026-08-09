@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tox/tox.h>
+
 #include "src/core/conferenceid.h"
 #include "src/core/groupid.h"
 #include "src/core/icoregroupquery.h"
@@ -112,7 +114,7 @@ private slots:
     void onGroupTopicChanged(uint32_t groupNumber, const QString& topic);
     void onGroupSelfJoined(uint32_t groupNumber);
     void onGroupSelfDisconnected(uint32_t groupNumber);
-    void onGroupJoinFailed(uint32_t groupNumber);
+    void onGroupJoinFailed(uint32_t groupNumber, Tox_Group_Join_Fail failType);
     void onGroupPeerRolesChanged(uint32_t groupNumber);
     void onGroupPasswordChanged(uint32_t groupNumber, bool hasPassword);
     void onGroupPeerLimitChanged(uint32_t groupNumber, uint16_t peerLimit);

@@ -240,7 +240,7 @@ signals:
     void groupJoined(uint32_t groupNumber, GroupId groupId);
     void groupSelfJoined(uint32_t groupNumber);
     void groupSelfDisconnected(uint32_t groupNumber);
-    void groupJoinFailed(uint32_t groupNumber);
+    void groupJoinFailed(uint32_t groupNumber, Tox_Group_Join_Fail failType);
     void groupPeerRolesChanged(uint32_t groupNumber);
     void groupPasswordChanged(uint32_t groupNumber, bool hasPassword);
     void groupPeerLimitChanged(uint32_t groupNumber, uint16_t peerLimit);
