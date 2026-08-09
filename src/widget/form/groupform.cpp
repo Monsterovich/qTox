@@ -71,7 +71,7 @@ GroupForm::GroupForm(Core& core_, Group* chatGroup, IChatLog& chatLog_,
                       conferenceList_, groupList_)
     , core{core_}
     , group(chatGroup)
-    , groupDispatcher(dynamic_cast<GroupMessageDispatcher*>(&messageDispatcher_))
+    , groupDispatcher(qobject_cast<GroupMessageDispatcher*>(&messageDispatcher_))
     , settings(settings_)
     , style{style_}
     , friendList{friendList_}
