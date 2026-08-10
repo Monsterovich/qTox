@@ -58,11 +58,12 @@ ChatMessage::Ptr createMessage(const QString& displayName, bool isSelf, bool col
     }
 
     const bool isPrivate = !chatLogMessage.message.recipient.isEmpty();
+    const QString recipientName = isSelf ? chatLogMessage.message.recipientName : QString();
     const auto timestamp = chatLogMessage.message.timestamp;
     return ChatMessage::createChatMessage(displayName, chatLogMessage.message.content, messageType,
                                           isSelf, chatLogMessage.state, timestamp, documentCache,
                                           smileyPack, settings, style, colorizeNames, isPrivate,
-                                          chatLogMessage.message.recipientName);
+                                          recipientName);
 }
 
 void renderMessageRaw(const QString& displayName, bool isSelf, bool colorizeNames,
