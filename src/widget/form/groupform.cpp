@@ -715,15 +715,28 @@ void GroupForm::onSendTriggered()
         return;
     }
 
-    msgEdit->setLastMessage(msg);
-    msgEdit->clear();
-
-    if (!privateMessageTarget.isEmpty() && groupDispatcher != nullptr) {
-        const uint32_t peerId = group->getPeerId(privateMessageTarget);
-        if (peerId != std::numeric_limits<uint32_t>::max()) {
-            groupDispatcher->sendPrivateMessage(peerId, isAction, msg);
+    if (!privateMessageTarget.isEmpty()) {
+        if (groupDispatcher == nullptr) {
+            const auto curTime = QDateTime::currentDateTime();
+            addSystemInfoMessage(curTime, SystemMessageType::messageSendFailed, {});
+            cancelPrivateMessage();
+            return;
         }
+
+        const uint32_t peerId = group->getPeerId(privateMessageTarget);
+        if (peerId == std::numeric_limits<uint32_t>::max()) {
+            const auto curTime = QDateTime::currentDateTime();
+            addSystemInfoMessage(curTime, SystemMessageType::messageSendFailed, {});
+            cancelPrivateMessage();
+            return;
+        }
+
+        msgEdit->setLastMessage(msg);
+        msgEdit->clear();
+        groupDispatcher->sendPrivateMessage(peerId, isAction, msg);
     } else {
+        msgEdit->setLastMessage(msg);
+        msgEdit->clear();
         messageDispatcher.sendMessage(isAction, msg);
     }
 }
