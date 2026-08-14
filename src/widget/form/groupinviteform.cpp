@@ -46,10 +46,12 @@ GroupInviteForm::GroupInviteForm(Settings& settings_, Core& core_)
         const QString groupName = QInputDialog::getText(
             this, tr("Create group"), tr("Enter a name for the group"), QLineEdit::Normal,
             QString(), &ok);
-        if (ok && !groupName.isEmpty()) {
-            emit groupCreate(groupName);
-        } else {
-            QMessageBox::warning(this, tr("Create group"), tr("Group name cannot be empty."));
+        if (ok) {
+            if (!groupName.isEmpty()) {
+                emit groupCreate(groupName);
+            } else {
+                QMessageBox::warning(this, tr("Create group"), tr("Group name cannot be empty."));
+            }
         }
     });
     connect(joinButton, &QPushButton::clicked, this, [this]() {
@@ -57,18 +59,21 @@ GroupInviteForm::GroupInviteForm(Settings& settings_, Core& core_)
         const QString chatIdHex = QInputDialog::getText(
             this, tr("Join group by ID"), tr("Enter the group Chat ID (64 hex characters):"),
             QLineEdit::Normal, QString(), &ok);
-        if (!ok || chatIdHex.isEmpty()) {
-            QMessageBox::warning(this, tr("Join group by ID"), tr("Group ID cannot be empty."));
-            return;
+        if (ok) {
+            if (!chatIdHex.isEmpty()) {
+                const QString clean = chatIdHex.trimmed();
+                const QByteArray rawId = QByteArray::fromHex(clean.toLatin1());
+                if (rawId.size() != TOX_GROUP_CHAT_ID_SIZE) {
+                    QMessageBox::warning(this, tr("Join group by ID"),
+                                         tr("Invalid group ID. Expected 64 hex characters."));
+                    return;
+                }
+                core.joinGroup(GroupId(rawId));
+            } else {
+                QMessageBox::warning(this, tr("Join group by ID"), tr("Group ID cannot be empty."));
+                return;
+            }
         }
-        const QString clean = chatIdHex.trimmed();
-        const QByteArray rawId = QByteArray::fromHex(clean.toLatin1());
-        if (rawId.size() != TOX_GROUP_CHAT_ID_SIZE) {
-            QMessageBox::warning(this, tr("Join group by ID"),
-                                 tr("Invalid group ID. Expected 64 hex characters."));
-            return;
-        }
-        core.joinGroup(GroupId(rawId));
     });
 
     auto* innerWidget = new QWidget(scroll);
