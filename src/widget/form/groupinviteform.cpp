@@ -48,6 +48,8 @@ GroupInviteForm::GroupInviteForm(Settings& settings_, Core& core_)
             QString(), &ok);
         if (ok && !groupName.isEmpty()) {
             emit groupCreate(groupName);
+        } else {
+            QMessageBox::warning(this, tr("Create group"), tr("Group name cannot be empty."));
         }
     });
     connect(joinButton, &QPushButton::clicked, this, [this]() {
@@ -56,6 +58,7 @@ GroupInviteForm::GroupInviteForm(Settings& settings_, Core& core_)
             this, tr("Join group by ID"), tr("Enter the group Chat ID (64 hex characters):"),
             QLineEdit::Normal, QString(), &ok);
         if (!ok || chatIdHex.isEmpty()) {
+            QMessageBox::warning(this, tr("Join group by ID"), tr("Group ID cannot be empty."));
             return;
         }
         const QString clean = chatIdHex.trimmed();
