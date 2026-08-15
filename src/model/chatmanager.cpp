@@ -445,7 +445,9 @@ void ChatManager::onGroupPeerJoined(uint32_t groupNumber, uint32_t peerId)
 {
     const GroupId& groupId = groupList.id2Key(groupNumber);
     Group* g = groupList.findGroup(groupId);
-    assert(g);
+    if (g == nullptr) {
+        return;
+    }
 
     g->onPeerJoin(peerId);
 }
@@ -454,7 +456,9 @@ void ChatManager::onGroupPeerExited(uint32_t groupNumber, uint32_t peerId)
 {
     const GroupId& groupId = groupList.id2Key(groupNumber);
     Group* g = groupList.findGroup(groupId);
-    assert(g);
+    if (g == nullptr) {
+        return;
+    }
 
     g->onPeerExit(peerId);
 }
@@ -463,7 +467,9 @@ void ChatManager::onGroupPeerNameChanged(uint32_t groupNumber, uint32_t peerId, 
 {
     const GroupId& groupId = groupList.id2Key(groupNumber);
     Group* g = groupList.findGroup(groupId);
-    assert(g);
+    if (g == nullptr) {
+        return;
+    }
 
     g->onPeerNameChanged(peerId, newName);
 }
@@ -472,7 +478,9 @@ void ChatManager::onGroupPeerStatusChanged(uint32_t groupNumber, uint32_t peerId
 {
     const GroupId& groupId = groupList.id2Key(groupNumber);
     Group* g = groupList.findGroup(groupId);
-    assert(g);
+    if (g == nullptr) {
+        return;
+    }
 
     g->onPeerStatusChanged(peerId, status);
 }
@@ -481,7 +489,9 @@ void ChatManager::onGroupTopicChanged(uint32_t groupNumber, const QString& topic
 {
     const GroupId& groupId = groupList.id2Key(groupNumber);
     Group* g = groupList.findGroup(groupId);
-    assert(g);
+    if (g == nullptr) {
+        return;
+    }
 
     g->setTopic(QString(), topic);
     settings.setGroupTopic(groupId.toString(), topic);
