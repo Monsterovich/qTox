@@ -759,10 +759,6 @@ so you can save the file on Windows.</source>
         <source>Conference #%1</source>
         <translation>Конференция #%1</translation>
     </message>
-    <message>
-        <source>Group %1</source>
-        <translation>Группа %1</translation>
-    </message>
 </context>
 <context>
     <name>ChatTextEdit</name>
@@ -864,93 +860,6 @@ so you can save the file on Windows.</source>
     <message>
         <source>Invited by %1 on %2 at %3.</source>
         <translation>Приглашён %1 от %2 в %3.</translation>
-    </message>
-    <message>
-        <source>Join</source>
-        <translation>Присоединиться</translation>
-    </message>
-    <message>
-        <source>Decline</source>
-        <translation>Отказаться</translation>
-    </message>
-</context>
-<context>
-    <name>GroupInviteForm</name>
-    <message>
-        <source>Create group</source>
-        <translation>Создать группу</translation>
-    </message>
-    <message>
-        <source>Create new group</source>
-        <translation>Создать новую группу</translation>
-    </message>
-    <message>
-        <source>Enter a name for the group</source>
-        <translation>Введите имя группы</translation>
-    </message>
-    <message>
-        <source>Enter the group Chat ID (64 hex characters):</source>
-        <translation>Введите Chat ID группы (64 шестнадцатеричных символа):</translation>
-    </message>
-    <message>
-        <source>Group invites</source>
-        <translation>Приглашения в группы</translation>
-    </message>
-    <message>
-        <source>Groups</source>
-        <translation>Группы</translation>
-    </message>
-    <message>
-        <source>Invalid group ID. Expected 64 hex characters.</source>
-        <translation>Недопустимый идентификатор группы. Ожидается 64 шестнадцатеричных символа.</translation>
-    </message>
-    <message>
-        <source>Join group by ID</source>
-        <translation>Присоединиться к группе по ID</translation>
-    </message>
-</context>
-<context>
-    <name>GroupWidget</name>
-    <message>
-        <source>Open chat in new window</source>
-        <translation>Перенести разговор в новое окно</translation>
-    </message>
-    <message>
-        <source>Remove chat from this window</source>
-        <translation>Исключить разговор из этого окна</translation>
-    </message>
-    <message>
-        <source>Set title...</source>
-        <translation>Установить заголовок...</translation>
-    </message>
-    <message>
-        <source>Quit group</source>
-        <comment>Menu to quit a group</comment>
-        <translation>Покинуть группу</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n user(s) in chat</source>
-        <comment>Number of users in chat</comment>
-        <translation>
-            <numerusform>%n пользователь в чате</numerusform>
-            <numerusform>%n пользователя в чате</numerusform>
-            <numerusform>%n пользователей в чате</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>New message</source>
-        <translation>Новое сообщение</translation>
-    </message>
-    <message>
-        <source>Online</source>
-        <translation>В сети</translation>
-    </message>
-</context>
-<context>
-    <name>GroupInviteWidget</name>
-    <message>
-        <source>Invited by %1 to %2 on %3 at %4.</source>
-        <translation>Приглашён %1 в %2 от %3 в %4.</translation>
     </message>
     <message>
         <source>Join</source>
@@ -1122,6 +1031,13 @@ so you can save the file on Windows.</source>
         <source>Transferred files</source>
         <comment>&quot;Headline&quot; of the window</comment>
         <translation>Переданные файлы</translation>
+    </message>
+</context>
+<context>
+    <name>FriendChatroom</name>
+    <message>
+        <source>Group %1</source>
+        <translation>Группа %1</translation>
     </message>
 </context>
 <context>
@@ -1616,6 +1532,101 @@ instead of closing entirely.</source>
     <message>
         <source>Private message to: %1</source>
         <translation>Личное сообщение для: %1</translation>
+    </message>
+</context>
+<context>
+    <name>GroupInviteForm</name>
+    <message>
+        <source>Create group</source>
+        <translation>Создать группу</translation>
+    </message>
+    <message>
+        <source>Create new group</source>
+        <translation>Создать новую группу</translation>
+    </message>
+    <message>
+        <source>Enter a name for the group</source>
+        <translation>Введите имя группы</translation>
+    </message>
+    <message>
+        <source>Enter the group Chat ID (64 hex characters):</source>
+        <translation>Введите Chat ID группы (64 шестнадцатеричных символа):</translation>
+    </message>
+    <message>
+        <source>Group invites</source>
+        <translation>Приглашения в группы</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <translation>Группы</translation>
+    </message>
+    <message>
+        <source>Invalid group ID. Expected 64 hex characters.</source>
+        <translation>Недопустимый идентификатор группы. Ожидается 64 шестнадцатеричных символа.</translation>
+    </message>
+    <message>
+        <source>Join group by ID</source>
+        <translation>Присоединиться к группе по ID</translation>
+    </message>
+    <message>
+        <source>Group name cannot be empty.</source>
+        <translation>Имя группы не может быть пустым.</translation>
+    </message>
+    <message>
+        <source>Group ID cannot be empty.</source>
+        <translation>ID группы не может быть пустым.</translation>
+    </message>
+</context>
+<context>
+    <name>GroupInviteWidget</name>
+    <message>
+        <source>Invited by %1 to %2 on %3 at %4.</source>
+        <translation>Приглашён %1 в %2 от %3 в %4.</translation>
+    </message>
+    <message>
+        <source>Join</source>
+        <translation>Присоединиться</translation>
+    </message>
+    <message>
+        <source>Decline</source>
+        <translation>Отказаться</translation>
+    </message>
+</context>
+<context>
+    <name>GroupWidget</name>
+    <message>
+        <source>Open chat in new window</source>
+        <translation>Перенести разговор в новое окно</translation>
+    </message>
+    <message>
+        <source>Remove chat from this window</source>
+        <translation>Исключить разговор из этого окна</translation>
+    </message>
+    <message>
+        <source>Set title...</source>
+        <translation>Установить заголовок...</translation>
+    </message>
+    <message>
+        <source>Quit group</source>
+        <comment>Menu to quit a group</comment>
+        <translation>Покинуть группу</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n user(s) in chat</source>
+        <comment>Number of users in chat</comment>
+        <translation>
+            <numerusform>%n пользователь в чате</numerusform>
+            <numerusform>%n пользователя в чате</numerusform>
+            <numerusform>%n пользователей в чате</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>New message</source>
+        <translation>Новое сообщение</translation>
+    </message>
+    <message>
+        <source>Online</source>
+        <translation>В сети</translation>
     </message>
 </context>
 <context>
@@ -2194,6 +2205,18 @@ Press Shift+F1 for more information.</source>
     <message>
         <source>Incoming call</source>
         <translation>Входящий звонок</translation>
+    </message>
+    <message>
+        <source>New group message</source>
+        <translation>Новое сообщение в группе</translation>
+    </message>
+    <message>
+        <source>Group invite received</source>
+        <translation>Получено приглашение в группу</translation>
+    </message>
+    <message>
+        <source>%1 invites you to join a group.</source>
+        <translation>%1 приглашает вас вступить в группу.</translation>
     </message>
 </context>
 <context>
