@@ -23,6 +23,18 @@ QString generateContent(const QHash<const Conference*, size_t>& conferenceNotifi
     return it.key()->getPeerList()[sender] + ": " + lastMessage;
 }
 
+QString generateContent(const QHash<const Group*, size_t>& groupNotifications,
+                        QString lastMessage, const ToxPk& sender)
+{
+    assert(!groupNotifications.empty());
+
+    auto it = groupNotifications.begin();
+    if (it == groupNotifications.end()) {
+        qFatal("Concurrency error: group notifications got cleared while reading");
+    }
+    return it.key()->getPeerList()[sender] + ": " + lastMessage;
+}
+
 QPixmap getSenderAvatar(Profile* profile, const ToxPk& sender)
 {
     return profile != nullptr ? profile->loadAvatar(sender) : QPixmap();
@@ -101,6 +113,8 @@ NotificationData NotificationGenerator::groupMessageNotification(const Group* g,
                                                                  const ToxPk& sender,
                                                                  const QString& message)
 {
+    groupNotifications[g]++;
+
     NotificationData ret;
     ret.category = "transfer";
 
@@ -110,7 +124,7 @@ NotificationData NotificationGenerator::groupMessageNotification(const Group* g,
     }
 
     ret.title = g->getDisplayedName();
-    ret.message = message;
+    ret.message = generateContent(groupNotifications, message, sender);
     ret.pixmap = getSenderAvatar(profile, sender);
 
     return ret;
@@ -193,4 +207,5 @@ void NotificationGenerator::onNotificationActivated()
 {
     friendNotifications = {};
     conferenceNotifications = {};
+    groupNotifications = {};
 }

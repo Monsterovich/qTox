@@ -53,4 +53,5 @@ private:
     Profile* profile;
     QHash<const Friend*, size_t> friendNotifications;
     QHash<const Conference*, size_t> conferenceNotifications;
+    QHash<const Group*, size_t> groupNotifications;
 };
