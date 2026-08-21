@@ -13,10 +13,10 @@
 #include <array>
 #include <vector>
 
-const std::array<QString, 11> DbUtility::testFileList = {
+const std::array<QString, 12> DbUtility::testFileList = {
     "testCreation.db", "testIsNewDbTrue.db", "testIsNewDbFalse.db", "test0to1.db",
     "test1to2.db",     "test2to3.db",        "test3to4.db",         "test4to5.db",
-    "test5to6.db",     "test6to7.db",        "test9to10.db",
+    "test5to6.db",     "test6to7.db",        "test9to10.db",        "test11to12.db",
 };
 
 // db schemas can be select with "SELECT name, sql FROM sqlite_master;" on the database.
