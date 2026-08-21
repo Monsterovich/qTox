@@ -1574,7 +1574,7 @@ bool Core::setGroupPeerRole(int groupNumber, int peerId, GroupRole role)
 {
     const QMutexLocker<QRecursiveMutex> ml{&coreLoopLock};
 
-    const Tox_Group_Role toxRole = static_cast<Tox_Group_Role>(role);
+    const auto toxRole = static_cast<Tox_Group_Role>(role);
     Tox_Err_Group_Set_Role error;
     const bool success = tox_group_set_role(tox.get(), groupNumber, peerId, toxRole, &error);
     if (!success) {
@@ -1834,7 +1834,7 @@ bool Core::setGroupSelfName(int groupNumber, const QString& name)
     const ToxString toxName(name);
     Tox_Err_Group_Self_Name_Set error;
     const bool success = tox_group_self_set_name(tox.get(), groupNumber,
-                                                  reinterpret_cast<const uint8_t*>(toxName.data()),
+                                                  toxName.data(),
                                                   toxName.size(), &error);
     if (!success) {
         qWarning() << "Failed to set group self name for group" << groupNumber << ":"

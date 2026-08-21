@@ -33,19 +33,19 @@ public:
     QString getGroupTitle(int groupNumber) const override
     {
         std::ignore = groupNumber;
-        return QString("group");
+        return {"group"};
     }
 
     QString getGroupTopic(int groupNumber) const override
     {
         std::ignore = groupNumber;
-        return QString();
+        return {};
     }
 
     QString getGroupSelfName(int groupNumber) const override
     {
         std::ignore = groupNumber;
-        return QString("self");
+        return {"self"};
     }
 
     bool setGroupSelfName(int groupNumber, const QString& name) override

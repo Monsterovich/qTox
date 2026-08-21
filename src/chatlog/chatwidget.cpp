@@ -1078,7 +1078,7 @@ void ChatWidget::onWorkerTimeout()
             return;
         }
 
-        if (static_cast<size_t>(workerLastIndex) >= chatLineStorage->size()) {
+        if (workerLastIndex >= chatLineStorage->size()) {
             break;
         }
 

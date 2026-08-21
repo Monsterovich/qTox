@@ -7,7 +7,7 @@
 
 #include "settingsserializer.h"
 
-#include "src/core/toxpk.h"
+#include <tox/tox.h>
 
 #include <QDebug>
 

@@ -455,7 +455,7 @@ void GroupForm::onLabelContextMenuRequested(const QPoint& localPos)
     contextMenu->addSeparator();
 
     const QAction* selectedItem = contextMenu->exec(pos);
-    if (!selectedItem) {
+    if (selectedItem == nullptr) {
         return;
     }
     if (selectedItem == toggleMuteAction) {
@@ -566,7 +566,7 @@ void GroupForm::onTopicContextMenuRequested(const QPoint& localPos)
     }
 
     const QAction* selectedItem = contextMenu->exec(pos);
-    if (!selectedItem) {
+    if (selectedItem == nullptr) {
         return;
     }
     if (selectedItem == copyTopicAction) {
