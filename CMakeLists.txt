@@ -768,5 +768,6 @@ if(DEFINED ENV{IN_NIX_SHELL})
   add_custom_command(
     TARGET ${BINARY_NAME}
     POST_BUILD
-    COMMAND nix-shell --run "wrapQtApp ${BINARY_NAME}")
+    COMMAND nix-shell "${CMAKE_CURRENT_SOURCE_DIR}" --run
+            "wrapQtApp ${BINARY_NAME}")
 endif()
