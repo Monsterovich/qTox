@@ -45,6 +45,7 @@ public:
     QString getDisplayedName() const override;
     QString getDisplayedName(const ToxPk& contact) const override;
     QString resolveToxPk(const ToxPk& id) const;
+    ToxPk getSelfPeerPk() const;
     void setSelfName(const QString& name);
     QString getSelfName() const;
 

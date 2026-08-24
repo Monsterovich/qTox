@@ -239,7 +239,7 @@ void GroupForm::updateUserNames()
     /* we store the peer labels by their ToxPk, but the namelist layout
      * needs it in alphabetical order, so we first create and store the labels
      * and then sort them by their text and add them to the layout in that order */
-    const auto selfPk = core.getSelfPublicKey();
+    const auto selfPk = core.getGroupSelfPk(group->getId());
     for (const auto& peerPk : peers.keys()) {
         const QString peerName = peers.value(peerPk);
         const QString editedName = editName(peerName);
@@ -400,7 +400,7 @@ void GroupForm::onLabelContextMenuRequested(const QPoint& localPos)
     const QString unmuteString = tr("unmute");
     QStringList blockList = settings.getBlockList();
     auto* const contextMenu = new QMenu(this);
-    const ToxPk selfPk = core.getSelfPublicKey();
+    const ToxPk selfPk = core.getGroupSelfPk(group->getId());
     ToxPk peerPk;
 
     // delete menu after it stops being used
@@ -496,7 +496,7 @@ void GroupForm::onTopicContextMenuRequested(const QPoint& localPos)
 
     auto* copyTopicAction = contextMenu->addAction(tr("Copy topic"));
     auto* copyIdAction = contextMenu->addAction(tr("Copy group ID"));
-    const GroupRole selfRole = group->getPeerRole(core.getSelfPublicKey());
+    const GroupRole selfRole = group->getPeerRole(core.getGroupSelfPk(group->getId()));
     QAction* setTopicAction = nullptr;
     QAction* setNicknameAction = nullptr;
     QMenu* statusMenu = nullptr;
@@ -666,7 +666,7 @@ void GroupForm::editTopic()
 
 bool GroupForm::canSetTopic() const
 {
-    const GroupRole selfRole = group->getPeerRole(core.getSelfPublicKey());
+    const GroupRole selfRole = group->getPeerRole(core.getGroupSelfPk(group->getId()));
     if (selfRole == GroupRole::Observer) {
         return false;
     }

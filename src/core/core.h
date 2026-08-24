@@ -92,6 +92,7 @@ public:
     uint32_t getGroupSelfPeerId(int groupNumber) const override;
     QString getGroupPeerName(int groupNumber, int peerId) const override;
     ToxPk getGroupPeerPk(int groupNumber, int peerId) const override;
+    ToxPk getGroupSelfPk(int groupNumber) const override;
     QString getGroupTitle(int groupNumber) const override;
     QString getGroupTopic(int groupNumber) const override;
     QString getGroupSelfName(int groupNumber) const override;

@@ -30,6 +30,13 @@ public:
         return ToxPk(id);
     }
 
+    ToxPk getGroupSelfPk(int groupNumber) const override
+    {
+        std::ignore = groupNumber;
+        uint8_t id[TOX_PUBLIC_KEY_SIZE] = {static_cast<uint8_t>(0)};
+        return ToxPk(id);
+    }
+
     QString getGroupTitle(int groupNumber) const override
     {
         std::ignore = groupNumber;

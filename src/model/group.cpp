@@ -135,6 +135,11 @@ QString Group::resolveToxPk(const ToxPk& id) const
     return {};
 }
 
+ToxPk Group::getSelfPeerPk() const
+{
+    return groupQuery.getGroupSelfPk(toxGroupNum);
+}
+
 void Group::setSelfName(const QString& name)
 {
     selfName = name;
@@ -290,7 +295,7 @@ Status::Status Group::getGroupStatus() const
 QString Group::resolvePeerName(uint32_t peerId) const
 {
     const ToxPk pk = groupQuery.getGroupPeerPk(toxGroupNum, peerId);
-    if (pk == idHandler.getSelfPublicKey()) {
+    if (pk == getSelfPeerPk()) {
         return idHandler.getUsername();
     }
 
@@ -353,7 +358,7 @@ void Group::onPeerNameChanged(uint32_t peerId, const QString& newName)
     const QString displayName = friendList.decideNickname(pk, newName);
     if (!peerDisplayNames.contains(pk)) {
         peerDisplayNames[pk] = displayName;
-        if (pk == idHandler.getSelfPublicKey()) {
+        if (pk == getSelfPeerPk()) {
             selfName = displayName;
         }
         emit userJoined(pk, displayName);
@@ -364,7 +369,7 @@ void Group::onPeerNameChanged(uint32_t peerId, const QString& newName)
     if (peerDisplayNames[pk] != displayName) {
         const auto oldName = peerDisplayNames[pk];
         peerDisplayNames[pk] = displayName;
-        if (pk == idHandler.getSelfPublicKey()) {
+        if (pk == getSelfPeerPk()) {
             selfName = displayName;
         }
         emit peerNameChanged(pk, oldName, displayName);
@@ -376,7 +381,7 @@ void Group::onPeerStatusChanged(uint32_t peerId, Status::Status status)
     const ToxPk pk = groupQuery.getGroupPeerPk(toxGroupNum, peerId);
     peerIdToPk[peerId] = pk;
 
-    if (pk == idHandler.getSelfPublicKey()) {
+    if (pk == getSelfPeerPk()) {
         selfStatus = status;
     }
 

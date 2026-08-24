@@ -55,6 +55,7 @@ public:
 
     virtual QString getGroupPeerName(int groupNumber, int peerId) const = 0;
     virtual ToxPk getGroupPeerPk(int groupNumber, int peerId) const = 0;
+    virtual ToxPk getGroupSelfPk(int groupNumber) const = 0;
     virtual QString getGroupTitle(int groupNumber) const = 0;
     virtual QString getGroupTopic(int groupNumber) const = 0;
     virtual QString getGroupSelfName(int groupNumber) const = 0;

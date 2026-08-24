@@ -77,7 +77,7 @@ GroupMessageDispatcher::sendPrivateMessage(uint32_t peerId, bool isAction, const
 void GroupMessageDispatcher::onMessageReceived(const ToxPk& sender, bool isAction,
                                                const QString& content)
 {
-    const bool isSelf = sender == idHandler.getSelfPublicKey();
+    const bool isSelf = sender == group.getSelfPeerPk();
 
     if (isSelf) {
         return;
@@ -94,7 +94,7 @@ void GroupMessageDispatcher::onMessageReceived(const ToxPk& sender, bool isActio
 void GroupMessageDispatcher::onPrivateMessageReceived(const ToxPk& sender, bool isAction,
                                                        const QString& content)
 {
-    const bool isSelf = sender == idHandler.getSelfPublicKey();
+    const bool isSelf = sender == group.getSelfPeerPk();
 
     if (isSelf) {
         return;
@@ -106,7 +106,7 @@ void GroupMessageDispatcher::onPrivateMessageReceived(const ToxPk& sender, bool 
     }
 
     Message message = processor.processIncomingCoreMessage(isAction, content);
-    message.recipient = idHandler.getSelfPublicKey();
+    message.recipient = group.getSelfPeerPk();
     message.recipientName = idHandler.getUsername();
     emit messageReceived(sender, message);
 }
