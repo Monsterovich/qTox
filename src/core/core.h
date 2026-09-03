@@ -19,6 +19,7 @@
 #include "toxid.h"
 #include "toxpk.h"
 
+#include "src/model/conferenceinvite.h"
 #include "src/model/status.h"
 
 #include <QHash>

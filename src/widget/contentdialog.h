@@ -10,6 +10,7 @@
 #include "src/core/toxpk.h"
 #include "src/model/dialogs/idialogs.h"
 #include "src/model/status.h"
+#include "src/widget/friendwidget.h"
 #include "src/widget/genericchatitemlayout.h"
 #include "src/widget/tool/activatedialog.h"
 
@@ -23,7 +24,6 @@ class Core;
 class Friend;
 class FriendChatroom;
 class FriendListLayout;
-class FriendWidget;
 class GenericChatForm;
 class GenericChatroomWidget;
 class Conference;
